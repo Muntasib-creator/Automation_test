@@ -11,6 +11,6 @@
     }
     delete_tc();
     // fopen('');http://localhost/php_learn/site.php?tc_name=dashboard&tc_obj=to+test+dashboard
-    // header("Location: site.php");
+    header("Location: site.php");
     // return file_get_contents('http://localhost/php_learn/site.php');
 ?>

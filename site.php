@@ -39,11 +39,15 @@ echo var_dump($list_of_tc);
         <input name="tc_obj" type="text" placeholder="Write testcase bjective"><br>
         <input type="submit" value="Save">
     </form>
-    <?php foreach($list_of_tc as $each): ?>
-        <form action="delete_tc.php" method="GET"><input type="submit" value="Delete" name="<?php echo $each["id"];?>"></form>
-        <a href=""><?php echo "TEST-".$each["id"];?></a>
-        <a href=""><?php echo $each["tc_name"];?></a><br>
-    <?php endforeach; ?>
+    <table>
+        <?php foreach($list_of_tc as $each): ?>
+            <tr>
+            <td><form action="delete_tc.php" method="GET"><input type="submit" value="Delete" name="<?php echo $each["id"];?>"></form></td>
+            <td><a href=""><?php echo "TEST-".$each["id"];?></a></td>
+            <td><a href=""><?php echo $each["tc_name"];?></a><br></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
     <h3>
         <?php 
         // echo create_tc();
@@ -53,3 +57,4 @@ echo var_dump($list_of_tc);
 
 </body>
 </html>
+<?php  ?>
