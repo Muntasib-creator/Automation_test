@@ -14,38 +14,40 @@ $q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_creation_date`, `table_link` FROM `
 $res = mysqli_query($conn, $q1);
 $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
 
-echo var_dump($list_of_tc);
+// echo var_dump($list_of_tc);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raw PHP</title>
 </head>
-<body>
-    <h5><?php
-        echo("helloaa worldaaaccabb");
-        $list_of_tc_id=[
-            ["tc_id"=>"TEST-0000", "tc_name"=>"login"],
-            ["tc_id"=>"TEST-0001", "tc_name"=>"dashboard"],
-        ]
-    ?></h5>
 
-    <form action="create_tc.php"  method="GET">
+<body>
+
+    <form action="create_tc.php" method="GET">
         <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
         <input name="tc_obj" type="text" placeholder="Write testcase bjective"><br>
         <input type="submit" value="Save">
     </form>
     <table>
         <?php foreach($list_of_tc as $each): ?>
-            <tr>
-            <td><form action="delete_tc.php" method="GET"><input type="submit" value="Delete" name="<?php echo $each["id"];?>"></form></td>
+        <tr>
+            <td>
+                <div>
+                    <form action="delete_tc.php" method="GET">
+                        <input onclick='javascript:confirmationDelete($(this));return false;' type="submit"
+                            value="Delete" name="<?php echo $each["id"];?>">
+                    </form>
+                </div>
+            </td>
             <td><a href=""><?php echo "TEST-".$each["id"];?></a></td>
             <td><a href=""><?php echo $each["tc_name"];?></a><br></td>
-            </tr>
+        </tr>
         <?php endforeach; ?>
     </table>
     <h3>
@@ -53,8 +55,9 @@ echo var_dump($list_of_tc);
         // echo create_tc();
         ?>
     </h3>
-    
+
 
 </body>
+
 </html>
 <?php  ?>
