@@ -24,7 +24,20 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raw PHP</title>
+    <title>Automation</title>
+    <script>
+    function confirmBox() {
+        // let x = document.forms["delete_form"]["del_button"].tc_id;
+        // console.log(x)
+        a = confirm("Do you want to delete testcase?")
+        if (a == true) {
+            console.log("test case will be deleted");
+        } else {
+            console.log("test case wont be deleted");
+        }
+        return a;
+    }
+    </script>
 </head>
 
 <body>
@@ -39,9 +52,9 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
         <tr>
             <td>
                 <div>
-                    <form action="delete_tc.php" method="GET">
-                        <input onclick='javascript:confirmationDelete($(this));return false;' type="submit"
-                            value="Delete" name="<?php echo $each["id"];?>">
+                    <form action="delete_tc.php" name="delete_form" onsubmit="return confirmBox()" method="GET">
+                        <input type="submit" value="Delete" name="<?php echo $each["id"];?>"
+                            tc_id="<?php echo $each["id"];?>">
                     </form>
                 </div>
             </td>
