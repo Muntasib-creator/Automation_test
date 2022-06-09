@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <h4>viewing page of <?php echo $_GET["id"];?></h4>
+    <!-- <h4>viewing page of <?php echo $_GET["id"];?></h4> -->
     <div id="action_container">
         <table style="border-style: groove; margin: 10px 20px 20px 10px;}">
             <thead>
@@ -32,11 +32,22 @@
     // let button = document.getElementsByTagName("button").add
     // buttons = $x("//button[@test='del']")
     var xpathResult = document.evaluate(
-        "//button[@test='del']", document
+        "//button[@test='del']", document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null
+        
     );
+    var results = [];
+    var node;
+   while ((node = xpathResult.iterateNext()) != null) {
+     results.push(node);
+   }
     for (let i = 0; i < 10; i++) {
         console.log(i);
     }
+    var div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+
+  // Change this to div.childNodes to support multiple top-level nodes.
+  return div.firstChild;
 
     function add_action() {
         table_text = '<table style="border-style: groove;  margin: 10px 20px 20px 10px;}">\

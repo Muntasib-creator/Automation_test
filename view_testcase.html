@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- <h4>viewing page of <?php echo $_GET["id"];?></h4> -->
+    <button onclick="return add_action()">Add</button>
+    <div id="action_container">
+        <table style="border-style: groove;  margin: 10px 20px 20px 10px;">
+            <thead><th><button test="del">delete</button></th></thead>
+            
+            <tbody>
+                <tr>
+                    <td><input value="att_name" type="text" name="" id=""></td>
+                    <td><input value="element parameter" type="text" name="" id=""></td>
+                    <td><textarea name="" id="">att_val</textarea></td>
+                </tr>
+                <tr>
+                    <td><input value="click" type="text" name="" id=""></td>
+                    <td><input value="selenium action" type="text" name="" id=""></td>
+                    <td><textarea name="" id="">click</textarea></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+    // let button = document.getElementsByTagName("button").add
+    // buttons = $x("//button[@test='del']")
+    var xpathResult = document.evaluate(
+        "//button[@test='del']", document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null
+    );
+    var results = [];
+    var node;
+   while ((node = xpathResult.iterateNext()) != null) {
+     results.push(node);
+   }
+    for (let i = 0; i < results.length; i++) {
+        results[i].addEventListener("click", del_action)
+    }
+    
+
+    function add_action() {
+        table_text = '<table style="border-style: groove;  margin: 10px 20px 20px 10px;}">\
+            <thead><th><button test="del">delete</button></th></thead>\
+            <tbody>\
+                <tr>\
+                    <td><input value="att_name" type="text" name="" id=""></td>\
+                    <td><input value="element parameter" type="text" name="" id=""></td>\
+                    <td><textarea name="" id="">att_val</textarea></td>\
+                </tr>\
+                <tr>\
+                    <td><input value="click" type="text" name="" id=""></td>\
+                    <td><input value="selenium action" type="text" name="" id=""></td>\
+                    <td><textarea name="" id="">click</textarea></td>\
+                </tr>\
+            </tbody>\
+        </table>'
+        let ac_container = document.getElementById("action_container");
+        var div = document.createElement('div');
+        div.innerHTML = table_text.trim();
+        div.addEventListener("click", del_action);
+        let del_button = div.getElementsByTagName("button")[0];
+        del_button.addEventListener("click", del_action);
+        console.log(del_button);
+        ac_container.appendChild(div.firstChild);
+    }
+
+    function del_action(e) {
+        console.log(e.target.parentNode.parentNode.parentNode.parentNode);
+        element=e.target.parentNode.parentNode.parentNode.parentNode;
+        element.parentNode.removeChild(element);
+        //console.log(e.target.parent.parent.parent)
+    }
+    </script>
+</body>
+
+</html>
