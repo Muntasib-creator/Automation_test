@@ -11,6 +11,6 @@
         // echo var_dump($a);
     }
     delete_tc();
-    // header("Location: site.php");
+    header("Location: site.php");
     // return file_get_contents('http://localhost/php_learn/site.php');
 ?>
