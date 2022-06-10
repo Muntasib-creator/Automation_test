@@ -10,11 +10,13 @@
 
 <body>
     <!-- <h4>viewing page of <?php echo $_GET["id"];?></h4> -->
+    <label for="cars">Choose an Action</label>
+    <select name="cars" id="action_set">
+    </select>
     <button onclick="return add_action()">Add</button>
     <div id="action_container">
         <table style="border-style: groove;  margin: 10px 20px 20px 10px;">
-            <thead><th><button test="del">delete</button></th></thead>
-            
+            <thead><th><button test="del_action">delete</button></th></thead>
             <tbody>
                 <tr>
                     <td><input value="att_name" type="text" name="" id=""></td>
@@ -30,52 +32,71 @@
         </table>
     </div>
     <script>
-    // let button = document.getElementsByTagName("button").add
-    // buttons = $x("//button[@test='del']")
-    var xpathResult = document.evaluate(
-        "//button[@test='del']", document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null
-    );
-    var results = [];
-    var node;
-   while ((node = xpathResult.iterateNext()) != null) {
-     results.push(node);
-   }
-    for (let i = 0; i < results.length; i++) {
-        results[i].addEventListener("click", del_action)
-    }
+    document.getElementById("action_container").addEventListener("click", del_action);
     
+    action_db = {
+        go_to_link:[
+            ["go to link", "selenium action", "https://demo.zeuz.ai/web/level/one/scenerios/login"],
+        ],
+        click:[
+            ["att_name", "selenium action", "att_val"],
+            ["click", "selenium action", "click"],
+        ],
+        enter_text:[
+            ["att_name", "selenium action", "att_val"],
+            ["text", "selenium action", "val"],
+        ],
+        
+    }
+    let select = document.getElementById("action_set");
+    action_datasets = {}
+    for (var key of Object.keys(action_db)) {
+        var option = document.createElement('option');
+        _key = key.replaceAll("_", " ");
+        _key = _key.charAt(0).toUpperCase() + _key.toLocaleLowerCase().substring(1)
+        option.innerText = _key;
+        option.setAttribute("value", key);
+        select.appendChild(option);
 
+        action = action_db[key];
+        action_text = `<table style="border-style: groove;  margin: 10px 20px 20px 10px;}">
+            <thead><th><button test="del_action">delete</button></th></thead>
+            <tbody>`;
+        for(i=0;i<action.length;i++){
+            action_text += "<tr>";
+            for(j=0;j<action[i].length;j++){
+                if(j==2){
+                    action_text += `<td><textarea name="" id="">${action[i][j]}</textarea></td>`
+                }
+                else{
+                    action_text += `<td><input value="${action[i][j]}" type="text" name="" id=""></td>`
+                }
+            }
+            action_text += "</tr>";
+        }
+        action_text += `</tbody></table>`;
+        action_datasets[key] = action_text
+    }
+    console.log(action_datasets);
+    
     function add_action() {
-        table_text = '<table style="border-style: groove;  margin: 10px 20px 20px 10px;}">\
-            <thead><th><button test="del">delete</button></th></thead>\
-            <tbody>\
-                <tr>\
-                    <td><input value="att_name" type="text" name="" id=""></td>\
-                    <td><input value="element parameter" type="text" name="" id=""></td>\
-                    <td><textarea name="" id="">att_val</textarea></td>\
-                </tr>\
-                <tr>\
-                    <td><input value="click" type="text" name="" id=""></td>\
-                    <td><input value="selenium action" type="text" name="" id=""></td>\
-                    <td><textarea name="" id="">click</textarea></td>\
-                </tr>\
-            </tbody>\
-        </table>'
+        console.log(document.getElementById("action_set").value)
+        
+        table_text = action_datasets[document.getElementById("action_set").value];
         let ac_container = document.getElementById("action_container");
         var div = document.createElement('div');
         div.innerHTML = table_text.trim();
-        div.addEventListener("click", del_action);
         let del_button = div.getElementsByTagName("button")[0];
-        del_button.addEventListener("click", del_action);
-        console.log(del_button);
         ac_container.appendChild(div.firstChild);
     }
 
     function del_action(e) {
-        console.log(e.target.parentNode.parentNode.parentNode.parentNode);
-        element=e.target.parentNode.parentNode.parentNode.parentNode;
-        element.parentNode.removeChild(element);
-        //console.log(e.target.parent.parent.parent)
+        if(e.target.tagName != "BUTTON" || e.target.getAttribute("test") != "del_action"){
+            return;
+        }
+        //console.log(e.target.parentElement.parentElement.parentElement.parentElement);
+        element=e.target.parentElement.parentElement.parentElement.parentElement;
+        element.parentElement.removeChild(element);
     }
     </script>
 </body>
