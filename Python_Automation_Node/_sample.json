@@ -1,0 +1,304 @@
+[
+    {
+        "run_id": "debug_muhib_windows",
+        "release_version": "6.1.0",
+        "release_name": [
+            "21 Jan 2022"
+        ],
+        "release_info": "new search ui, new menubar, other ui enhancements, bug fixes, global step enable/disable, etc.",
+        "webserver_version": "6.1.0",
+        "db_version": "6.1.0",
+        "node_version": "15",
+        "is_linked": "",
+        "device_info": {
+            "browser_stack": {}
+        },
+        "test_cases": [
+            {
+                "testcase_no": "TEST-5103",
+                "title": "muhib If element found",
+                "automatability": "Automated",
+                "debug_steps": [],
+                "testcase_attachments_links": [],
+                "steps": [
+                    {
+                        "step_id": 6399,
+                        "step_name": "Zeuz demo ai",
+                        "step_sequence": 1,
+                        "step_driver_type": "Built_In_Driver",
+                        "automatablity": "automated",
+                        "always_run": false,
+                        "run_on_fail": false,
+                        "step_function": "Sequential Actions",
+                        "step_driver": "Built_In_Driver",
+                        "type": "normal",
+                        "step_attachments": [],
+                        "verify_point": true,
+                        "continue_on_fail": false,
+                        "step_time": 59,
+                        "actions": [
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "go to link",
+                                        "selenium action",
+                                        "https://demo.zeuz.ai/web/level/one/scenerios/login"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "username_id"
+                                    ],
+                                    [
+                                        "true",
+                                        "selenium conditional action",
+                                        "3-6"
+                                    ],
+                                    [
+                                        "false",
+                                        "selenium conditional action",
+                                        "5,6"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "sleep",
+                                        "common action",
+                                        "5"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "log 2",
+                                        "utility action",
+                                        "...... Paisi"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "username_id"
+                                    ],
+                                    [
+                                        "text",
+                                        "selenium action",
+                                        "zeuzTest"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "log 2",
+                                        "utility action",
+                                        "...... Pai nai"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "log 2",
+                                        "utility action",
+                                        "...... Action 6"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "tear down browser",
+                                        "selenium action",
+                                        "***this field you can ignore , Example \"teardown\" ***"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "How to upload a file",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "tag",
+                                        "element parameter",
+                                        "input"
+                                    ],
+                                    [
+                                        "type",
+                                        "element parameter",
+                                        "file"
+                                    ],
+                                    [
+                                        "text",
+                                        "selenium action",
+                                        "C:\\filepath.ext"
+                                    ]
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "step_id": 7458,
+                        "step_name": "temp",
+                        "step_sequence": 2,
+                        "step_driver_type": "Built_In_Driver",
+                        "automatablity": "automated",
+                        "always_run": false,
+                        "run_on_fail": false,
+                        "step_function": "Sequential Actions",
+                        "step_driver": "Built_In_Driver",
+                        "type": "linked",
+                        "step_attachments": [],
+                        "verify_point": false,
+                        "continue_on_fail": false,
+                        "step_time": 59,
+                        "actions": [
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "go to link",
+                                        "selenium action",
+                                        "https://demo.zeuz.ai/web/level/one/scenerios/login"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "username_id"
+                                    ],
+                                    [
+                                        "text",
+                                        "selenium action",
+                                        "zeuzTest"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "password_id"
+                                    ],
+                                    [
+                                        "text",
+                                        "selenium action",
+                                        "zeuzPass"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "signin_id"
+                                    ],
+                                    [
+                                        "click",
+                                        "selenium action",
+                                        "click"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": false,
+                                "step_actions": [
+                                    [
+                                        "ignore case",
+                                        "optional parameter",
+                                        "yes"
+                                    ],
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "text_showing"
+                                    ],
+                                    [
+                                        "validate full text",
+                                        "selenium action",
+                                        "Login Successful"
+                                    ]
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "dependency_list": {
+            "Browser": "Chrome",
+            "Mobile": "Android"
+        },
+        "debug": "yes",
+        "debug_clean": "NO",
+        "debug_step_actions": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+        ],
+        "debug_steps": [
+            "2"
+        ],
+        "RunTestQuery": [
+            "TEST-5103",
+            "Chrome",
+            "Android",
+            "muhib_windows"
+        ],
+        "dataAttr": [
+            "Test Case",
+            "run_dependencyBrowser",
+            "run_dependencyMobile"
+        ],
+        "filterArray": [
+            "AND",
+            "AND"
+        ],
+        "project_id": "PROJ-17",
+        "team_id": 2,
+        "user_id": 767,
+        "run_time": {},
+        "file_name": "muhib_windows_1"
+    }
+]

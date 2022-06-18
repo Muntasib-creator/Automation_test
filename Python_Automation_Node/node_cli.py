@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # -*- coding: cp1252 -*-
+import json
 import os
 from pathlib import Path
 import platform
@@ -1048,6 +1049,101 @@ def Bypass():
         RunProcess(testerid, user_info_object)
 
 
+def custom_run(log_dir=None):
+    try:
+        user_info_object = {}
+        user_info_object['project'] = ConfigModule.get_config_value("sectionOne", PROJECT_TAG, temp_ini_file)
+        user_info_object['team'] = ConfigModule.get_config_value("sectionOne", TEAM_TAG, temp_ini_file)
+        device_dict = All_Device_Info.get_all_connected_device_info()
+        rem_config = {"local_run": True}
+        ConfigModule.remote_config = rem_config
+        username = ConfigModule.get_config_value(AUTHENTICATION_TAG, USERNAME_TAG)
+        password = ConfigModule.get_config_value(AUTHENTICATION_TAG, PASSWORD_TAG)
+        server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
+        from rich.console import Console
+        rich_print = Console().print
+        rich_print("\nAuthentication successful")
+        rich_print("SERVER=", end="")
+        rich_print(server_name, style="bold cyan")
+        rich_print(":green_circle:" + username, style="bold cyan", end="")
+        print(" is Online\n")
+
+        etime = time.time() + (30 * 60)  # 30 minutes
+        while True:
+            try:
+                if time.time() > etime:
+                    print("30 minutes over, logging in again")
+                    break
+                r = requests.get("%s/automation_test/deployment.php?username=%s" %(server_name, username)).json()
+                if r and "run_status" in r and r["run_status"] != "no":
+                    PreProcess(log_dir=log_dir)
+
+                    save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"
+                    FL.CreateFolder(save_path, forced=False)
+                    # with open(save_path / f"{username}.json", 'w') as file:
+                    #     file.write(json.dumps(r["data"]))
+                    CommonUtil.node_manager_json(
+                        {
+                            "state": "in_progress",
+                            "report": {
+                                "zip": None,
+                                "directory": None,
+                            }
+                        }
+                    )
+                    try:
+                        MainDriverApi.main(device_dict, user_info_object)
+                    except:
+                        pass
+
+                    # Terminating all run_cancel threads after finishing a run
+                    CommonUtil.run_cancel = ""
+                    CommonUtil.run_cancelled = True
+                    if "run_cancel" in CommonUtil.all_threads:
+                        for t in CommonUtil.all_threads["run_cancel"]:
+                            t.result()
+                            CommonUtil.run_cancelled = True
+                        del CommonUtil.all_threads["run_cancel"]
+                    CommonUtil.run_cancelled = False
+                    break
+                else:
+                    time.sleep(3)
+
+            except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                Error_Detail = (
+                        (str(exc_type).replace("type ", "Error Type: "))
+                        + ";"
+                        + "Error Message: "
+                        + str(exc_obj)
+                        + ";"
+                        + "File Name: "
+                        + fname
+                        + ";"
+                        + "Line: "
+                        + str(exc_tb.tb_lineno)
+                )
+                CommonUtil.ExecLog("", Error_Detail, 4, False)
+                break  # Exit back to login() - In some circumstances, this while loop will get into a state when certain errors occur, where nothing runs, but loops forever. This stops that from happening
+        return True
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        Error_Detail = (
+            (str(exc_type).replace("type ", "Error Type: "))
+            + ";"
+            + "Error Message: "
+            + str(exc_obj)
+            + ";"
+            + "File Name: "
+            + fname
+            + ";"
+            + "Line: "
+            + str(exc_tb.tb_lineno)
+        )
+        CommonUtil.ExecLog("", Error_Detail, 4, False)
+
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     print("Press Ctrl-C to disconnect and quit.")
@@ -1062,10 +1158,11 @@ if __name__ == "__main__":
         print("Exiting...")
         sys.exit(1)
 
-    if local_run:
-        Local_run(log_dir=log_dir)
-    else:
-        # Bypass()
-        Login(cli=True, run_once=RUN_ONCE, log_dir=log_dir)
+    # if local_run:
+    #     Local_run(log_dir=log_dir)
+    # else:
+    #     # Bypass()
+    #     Login(cli=True, run_once=RUN_ONCE, log_dir=log_dir)
+    custom_run()
     CommonUtil.run_cancelled = True
     CommonUtil.ShutdownExecutor()
