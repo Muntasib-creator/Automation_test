@@ -77,31 +77,17 @@
     </select>
     <button onclick="return add_action()">Add</button>
     <button style="float:right" id="save_actions">Save</button>
+    <button style="float:right" id="run">Run</button>
+    <button style="float:right" id="debug">Debug</button>
     <div id="action_container">
-        <!-- <table style="border-style: groove;  margin: 10px 20px 20px 10px;">
-            <thead><th><button test="del_action">delete</button></th></thead>
-            <tbody>
-                <tr>
-                    <td width="5%"><button test="add_row">add</button></td>
-                    <td width="25%"><input value="att_name" type="text" name="" id=""></td>
-                    <td width="20%"><input value="element parameter" type="text" name="" id=""></td>
-                    <td width="45%"><textarea name="" id="">att_val</textarea></td>
-                    <td width="5%"><button test="del_row">del</button></td>
-                </tr>
-                <tr>
-                    <td width="5%"><button test="add_row">add</button></td>
-                    <td width="25%"><input value="click" type="text" name="" id=""></td>
-                    <td width="20%"><input value="selenium action" type="text" name="" id=""></td>
-                    <td width="45%"><textarea name="" id="">click</textarea></td>
-                    <td width="5%"><button test="del_row">del</button></td>
-                </tr>
-            </tbody>
-        </table> -->
     </div>
+
     <script>
     action_container = document.getElementById("action_container");
     action_container.addEventListener("click", del_action);
     document.getElementById("save_actions").addEventListener("click", save_actions);
+    document.getElementById("run").addEventListener("click", run);
+    document.getElementById("debug").addEventListener("click", debug);
     const urlParams = new URLSearchParams(window.location.search);
     const data  = JSON.parse(urlParams.get('data'));
     const tc_id  = JSON.parse(urlParams.get('tc_id'));
@@ -257,7 +243,14 @@
         url = `http://localhost/automation_test/save_actions.php?tc_id=${tc_id}&query=${query}`
         window.location = url;
     }
-    
+    function debug(e){
+        url = `http://localhost/automation_test/debug_run.php?tc_id=${tc_id}&run_status=debug`;
+        window.location = url;
+    }
+    function run(e){
+        url = `http://localhost/automation_test/debug_run.php?tc_id=${tc_id}&run_status=run`;
+        window.location = url;
+    }
     </script>
 </body>
 
