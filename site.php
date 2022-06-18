@@ -46,8 +46,9 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
                     </form>
                 </div>
             </td>
-            <td><a href="view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
-            <td><a href=""><?php echo $each["tc_name"];?></a><br></td>
+            <!-- <td><a href="view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td> -->
+            <td><a href="http://localhost/automation_test/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
+            <td><?php echo $each["tc_name"];?><br></td>
         </tr>
         <?php endforeach; ?>
     </table>
