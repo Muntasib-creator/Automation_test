@@ -47,8 +47,11 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
                 </div>
             </td>
             <!-- <td><a href="view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td> -->
-            <td><a href="http://localhost/automation_test/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
+            <td><a
+                    href="http://localhost/automation_test/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
+            </td>
             <td><?php echo $each["tc_name"];?><br></td>
+            <td><?php echo $each["tc_obj"];?><br></td>
         </tr>
         <?php endforeach; ?>
     </table>

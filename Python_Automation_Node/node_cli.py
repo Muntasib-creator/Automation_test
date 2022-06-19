@@ -1049,6 +1049,166 @@ def Bypass():
         RunProcess(testerid, user_info_object)
 
 
+json_data = [
+    {
+        "run_id": "debug_admin",    #todo
+        "release_version": "6.1.0",
+        "release_name": ["21 Jan 2022"],
+        "release_info": "new search ui, new menubar, other ui enhancements, bug fixes, global step enable/disable, etc.",
+        "webserver_version": "6.1.0",
+        "db_version": "6.1.0",
+        "node_version": "15",
+        "is_linked": "",
+        "device_info": {"browser_stack": {}},
+        "test_cases": [
+            {
+                "testcase_no": "TEST-5103", #todo Done
+                "title": "muhib If element found",  #todo   Done
+                "automatability": "Automated",
+                "debug_steps": [],
+                "testcase_attachments_links": [],
+                "steps": [
+                    {
+                        "step_id": 7458,
+                        "step_name": "temp",
+                        "step_sequence": 1,
+                        "step_driver_type": "Built_In_Driver",
+                        "automatablity": "automated",
+                        "always_run": False,
+                        "run_on_fail": False,
+                        "step_function": "Sequential Actions",
+                        "step_driver": "Built_In_Driver",
+                        "type": "linked",
+                        "step_attachments": [],
+                        "verify_point": False,
+                        "continue_on_fail": False,
+                        "step_time": 59,
+                        "actions": [    #todo done
+                            {
+                                "action_name": "None",
+                                "action_disabled": False,
+                                "step_actions": [
+                                    [
+                                        "go to link",
+                                        "selenium action",
+                                        "https://demo.zeuz.ai/web/level/one/scenerios/login"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": False,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "username_id"
+                                    ],
+                                    [
+                                        "text",
+                                        "selenium action",
+                                        "zeuzTest"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": False,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "password_id"
+                                    ],
+                                    [
+                                        "text",
+                                        "selenium action",
+                                        "zeuzPass"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": False,
+                                "step_actions": [
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "signin_id"
+                                    ],
+                                    [
+                                        "click",
+                                        "selenium action",
+                                        "click"
+                                    ]
+                                ]
+                            },
+                            {
+                                "action_name": "None",
+                                "action_disabled": False,
+                                "step_actions": [
+                                    [
+                                        "ignore case",
+                                        "optional parameter",
+                                        "yes"
+                                    ],
+                                    [
+                                        "id",
+                                        "element parameter",
+                                        "text_showing"
+                                    ],
+                                    [
+                                        "validate full text",
+                                        "selenium action",
+                                        "Login Successful"
+                                    ]
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "dependency_list": {
+            "Browser": "Chrome",
+            "Mobile": "Android"
+        },
+        "debug": "yes",     #todo
+        "debug_clean": "NO",    #todo
+        "debug_step_actions": [ #todo
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+        ],
+        "debug_steps": [
+            "1"
+        ],
+        "RunTestQuery": [
+            "TEST-5103",
+            "Chrome",
+            "Android",
+            "muhib_windows"
+        ],
+        "dataAttr": [
+            "Test Case",
+            "run_dependencyBrowser",
+            "run_dependencyMobile"
+        ],
+        "filterArray": [
+            "AND",
+            "AND"
+        ],
+        "project_id": "PROJ-17",
+        "team_id": 2,
+        "user_id": 767,
+        "run_time": {},
+        "file_name": "muhib_windows_1"
+    }
+]
+
+
 def custom_run(log_dir=None):
     try:
         user_info_object = {}
@@ -1079,9 +1239,29 @@ def custom_run(log_dir=None):
                     PreProcess(log_dir=log_dir)
 
                     save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"
-                    FL.CreateFolder(save_path, forced=False)
-                    # with open(save_path / f"{username}.json", 'w') as file:
-                    #     file.write(json.dumps(r["data"]))
+                    FL.CreateFolder(save_path, forced=True)
+                    ac_data = r["action_data"]
+                    tc_data = r["tc_data"]
+                    json_data[0]["test_cases"][0]["title"] = tc_data["tc_name"]
+                    json_data[0]["test_cases"][0]["testcase_no"] = "TEST-" + "0"*(4-len(tc_data["id"])) + tc_data["id"]
+                    actions = []
+                    c = 0
+                    for i in ac_data:
+                        c = max(c, int(i["action_seq"]))
+                    for i in range(c):
+                        actions.append({
+                                "action_name": None,
+                                "action_disabled": None,
+                                "step_actions": []
+                            })
+                    for i in ac_data:
+                        actions[int(i["action_seq"])-1]["action_name"] = i["action_name"]
+                        actions[int(i["action_seq"])-1]["action_disabled"] = bool(int(i["action_disable"]))
+                        actions[int(i["action_seq"])-1]["step_actions"].append([i["field"], i["sub_field"], i["value"]])
+
+                    json_data[0]["test_cases"][0]["steps"][0]["actions"] = actions
+                    with open(save_path / f"{username}.json", 'w') as file:
+                        file.write(json.dumps(json_data))
                     CommonUtil.node_manager_json(
                         {
                             "state": "in_progress",
