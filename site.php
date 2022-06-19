@@ -31,7 +31,7 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
 
     <form action="create_tc.php" method="GET">
         <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
-        <input name="tc_obj" type="text" placeholder="Write testcase bjective"><br>
+        <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
         <input type="submit" value="Save">
     </form>
     <table>
