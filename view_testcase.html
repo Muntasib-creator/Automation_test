@@ -7,7 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-
+        input#action_name { 
+            text-align: center; 
+            width:50%;
+        }
+        input{
+            width:90%;
+        }
+        textarea{
+            width: 90%;
+            
+        }
+        
     </style>
 </head>
 
@@ -67,10 +78,10 @@
             check = "unchecked";
         }
         table_text = `<table style="border-style: groove;  margin: 10px 20px 20px 10px;}">
-            <thead><th><input type="checkbox" ${check} id="disable"></th><th colspan="3"><input value="${actions[i]["action_name"]}" id="action_name" type="text" id="" style="width:50%"></th><th><button test="del_action">delete</button></th></thead>
+            <thead><tr><th colspan="5">Action-${i}</th></tr>
+            <tr><th><input type="checkbox" ${check} id="disable"></th><th colspan="3"><input value="${actions[i]["action_name"]}" id="action_name"></th><th><button test="del_action">delete</button></th></tr></thead>
             <tbody>`;
         for(j=1;j<actions[i]["rows"].length;j++){
-            //console.log(actions[i]["rows"][j]["field"])
             table_text += '<tr><td width="5%"><button test="add_row">add</button></td>';
             table_text += `<td width="25%" test="field"><input value="${actions[i]["rows"][j]["field"]}" type="text" name="" id=""></td>`
             table_text += `<td width="20%" test="sub_field"><input value="${actions[i]["rows"][j]["sub_field"]}" type="text" name="" id=""></td>`
@@ -115,7 +126,8 @@
 
         action = action_db[key];
         action_text = `<table style="border-style: groove;  margin: 10px 20px 20px 10px;}">
-            <thead><th><button test="del_action">delete</button></th></thead>
+            <thead><tr><th colspan="5">Action-${i}</th></tr>
+            <tr><th><input type="checkbox" checked id="disable"></th><th colspan="3"><input value="None" id="action_name"></th><th><button test="del_action">delete</button></th></tr></thead>
             <tbody>`;
         for(i=0;i<action.length;i++){
             action_text += '<tr><td width="5%"><button test="add_row">add</button></td>';
@@ -165,7 +177,6 @@
         for(i=0;i<action_container.childElementCount;i++){
             tbody = action_container.children[i].getElementsByTagName("tbody")[0];
             action_name = action_container.children[i].getElementsByTagName("thead")[0].getElementsByTagName("input")[1].value;
-            console.log(action_name)
             checked = action_container.children[i].getElementsByTagName("thead")[0].getElementsByTagName("input")[0].checked;
             if(checked==false){
                 disable = "1";
