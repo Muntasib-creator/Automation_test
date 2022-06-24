@@ -14,42 +14,55 @@ $q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_creation_date`, `table_link` FROM `
 $res = mysqli_query($conn, $q1);
 $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
 
-echo var_dump($list_of_tc);
+// echo var_dump($list_of_tc);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raw PHP</title>
+    <title>Automation</title>
 </head>
-<body>
-    <h5><?php
-        echo("helloaa worldaaaccabb");
-        $list_of_tc_id=[
-            ["tc_id"=>"TEST-0000", "tc_name"=>"login"],
-            ["tc_id"=>"TEST-0001", "tc_name"=>"dashboard"],
-        ]
-    ?></h5>
 
-    <form action="create_tc.php"  method="GET">
+<body>
+
+    <form action="create_tc.php" method="GET">
         <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
-        <input name="tc_obj" type="text" placeholder="Write testcase bjective"><br>
+        <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
         <input type="submit" value="Save">
     </form>
-    <?php foreach($list_of_tc as $each): ?>
-        <form action="delete_tc.php" method="GET"><input type="submit" value="Delete" name="<?php echo $each["id"];?>"></form>
-        <a href=""><?php echo "TEST-".$each["id"];?></a>
-        <a href=""><?php echo $each["tc_name"];?></a><br>
-    <?php endforeach; ?>
+    <table>
+        <?php foreach($list_of_tc as $each): ?>
+        <tr>
+            <td>
+                <div>
+                    <form action="delete_tc.php" name="delete_form"
+                        onsubmit="return confirm('Do you want to delete testcase?')" method="GET">
+                        <input type="submit" value="Delete" name="<?php echo $each["id"];?>"
+                            tc_id="<?php echo $each["id"];?>">
+                    </form>
+                </div>
+            </td>
+            <!-- <td><a href="view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td> -->
+            <td><a
+                    href="http://localhost/automation_test/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
+            </td>
+            <td><?php echo $each["tc_name"];?><br></td>
+            <td><?php echo $each["tc_obj"];?><br></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
     <h3>
         <?php 
         // echo create_tc();
         ?>
     </h3>
-    
+
 
 </body>
+
 </html>
+<?php  ?>
