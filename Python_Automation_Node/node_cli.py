@@ -17,7 +17,7 @@ with open(version_path, "r"):
         os.system("title " + "Python " + platform.python_version() + "(" + platform.architecture()[0] + ")" + " -- ZeuZ Node " + text)
     print(version_path.read_text())
 from Framework.module_installer import install_missing_modules
-install_missing_modules()
+# install_missing_modules()
 
 import sys, time, os.path, base64, signal, argparse, requests, zipfile
 from getpass import getpass
@@ -1223,9 +1223,9 @@ def custom_run(log_dir=None):
         from rich.console import Console
         rich_print = Console().print
         rich_print("\nAuthentication successful")
-        rich_print("SERVER=", end="")
+        rich_print("SERVER = ", end="")
         rich_print(server_name, style="bold cyan")
-        rich_print(":green_circle:" + username, style="bold cyan", end="")
+        rich_print(":green_circle: " + username, style="bold cyan", end="")
         print(" is Online\n")
 
         etime = time.time() + (30 * 60)  # 30 minutes
@@ -1234,12 +1234,15 @@ def custom_run(log_dir=None):
                 if time.time() > etime:
                     print("30 minutes over, logging in again")
                     break
-                r = requests.get("%s/automation_test/deployment.php?username=%s" %(server_name, username)).json()
+                r = requests.get("%s/automation_test/deployment.php?username=%s" % (server_name, username)).json()
                 if r and "run_status" in r and r["run_status"] != "no":
                     PreProcess(log_dir=log_dir)
-
                     save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"
                     FL.CreateFolder(save_path, forced=True)
+
+                    if "run" in r["run_status"]:
+                        json_data[0]["run_id"] = "run_admin"
+
                     ac_data = r["action_data"]
                     tc_data = r["tc_data"]
                     json_data[0]["test_cases"][0]["title"] = tc_data["tc_name"]
@@ -1256,73 +1259,53 @@ def custom_run(log_dir=None):
                             })
                     for i in ac_data:
                         actions[int(i["action_seq"])-1]["action_name"] = i["action_name"]
-                        actions[int(i["action_seq"])-1]["action_disabled"] = bool(int(i["action_disable"]))
+                        actions[int(i["action_seq"])-1]["action_disabled"] = bool(int(i["action_disable"])) if "debug" in r["run_status"] else False
                         actions[int(i["action_seq"])-1]["step_actions"].append([i["field"], i["sub_field"], i["value"]])
 
                     json_data[0]["test_cases"][0]["steps"][0]["actions"] = actions
                     with open(save_path / f"{username}.json", 'w') as file:
                         file.write(json.dumps(json_data))
-                    CommonUtil.node_manager_json(
-                        {
-                            "state": "in_progress",
-                            "report": {
-                                "zip": None,
-                                "directory": None,
-                            }
-                        }
-                    )
                     try:
                         MainDriverApi.main(device_dict, user_info_object)
                     except:
                         pass
-
-                    # Terminating all run_cancel threads after finishing a run
-                    CommonUtil.run_cancel = ""
-                    CommonUtil.run_cancelled = True
-                    if "run_cancel" in CommonUtil.all_threads:
-                        for t in CommonUtil.all_threads["run_cancel"]:
-                            t.result()
-                            CommonUtil.run_cancelled = True
-                        del CommonUtil.all_threads["run_cancel"]
-                    CommonUtil.run_cancelled = False
-                    break
+                    upload_json_report(json_data[0]["run_id"])
                 else:
                     time.sleep(3)
 
             except Exception as e:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                Error_Detail = (
-                        (str(exc_type).replace("type ", "Error Type: "))
-                        + ";"
-                        + "Error Message: "
-                        + str(exc_obj)
-                        + ";"
-                        + "File Name: "
-                        + fname
-                        + ";"
-                        + "Line: "
-                        + str(exc_tb.tb_lineno)
-                )
-                CommonUtil.ExecLog("", Error_Detail, 4, False)
-                break  # Exit back to login() - In some circumstances, this while loop will get into a state when certain errors occur, where nothing runs, but loops forever. This stops that from happening
+                CommonUtil.Exception_Handler(sys.exc_info())
+
         return True
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        Error_Detail = (
-            (str(exc_type).replace("type ", "Error Type: "))
-            + ";"
-            + "Error Message: "
-            + str(exc_obj)
-            + ";"
-            + "File Name: "
-            + fname
-            + ";"
-            + "Line: "
-            + str(exc_tb.tb_lineno)
-        )
-        CommonUtil.ExecLog("", Error_Detail, 4, False)
+        CommonUtil.Exception_Handler(sys.exc_info())
+
+
+def upload_json_report(run_id):
+    try:
+        if CommonUtil.debug_status: return
+        server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
+        zip_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file))/run_id.replace(":", "-")/CommonUtil.current_session_name
+        path = zip_path / "execution_log.json"
+        json_report = CommonUtil.get_all_logs(json=True)
+        with open(path, "w") as f:
+            json.dump(json_report, f)
+        report = []
+        for tc in json_report[0]["test_cases"]:
+            tc_no = int(tc["testcase_no"].split("-")[-1])
+            report.append([tc_no, tc["execution_detail"]["status"], tc["execution_detail"]["duration"]])
+        try:
+            res = requests.get("%s/automation_test/report.php?report=%s" % (server_name, json.dumps(report))).json()
+            if res["res"] == "ok":
+                CommonUtil.ExecLog("[Report]", "Successfully Uploaded the report", 1)
+            else:
+                CommonUtil.ExecLog("[Report]", "Could not upload the report", 3)
+        except:
+            CommonUtil.ExecLog("[Report]", "Could not upload the report", 3)
+            CommonUtil.Exception_Handler(sys.exc_info())
+    except:
+        CommonUtil.Exception_Handler(sys.exc_info())
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)

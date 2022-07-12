@@ -6,7 +6,7 @@
 if($conn->connect_error){
     die("DB Connection Failed " . $conn->connect_error);
 }
-echo "DB connected";
+// echo "DB connected";
 // $q = "insert into table(Name,Gender) values ('$name','$gender')";
 // mysqli_query($conn,$q);
 $q1 = "select * from testcases";
@@ -35,6 +35,14 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
         <input type="submit" value="Save">
     </form>
     <table>
+        <thead>
+            <th></th>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Objective</th>
+            <th>Result</th>
+            <th>Duration</th>
+        </thead>
         <?php foreach($list_of_tc as $each): ?>
         <tr>
             <td>
@@ -52,6 +60,8 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
             </td>
             <td><?php echo $each["tc_name"];?><br></td>
             <td><?php echo $each["tc_obj"];?><br></td>
+            <td><?php echo $each["tc_result"];?><br></td>
+            <td><?php echo $each["tc_duration"];?><br></td>
         </tr>
         <?php endforeach; ?>
     </table>
