@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 18, 2022 at 09:38 PM
+-- Generation Time: Jul 12, 2022 at 10:13 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -55,7 +55,12 @@ INSERT INTO `actions` (`id`, `tc_id`, `action_seq`, `action_name`, `action_disab
 (36, 9, 3, 'temp_name', 0, 1, 'att_name', 'selenium action', 'att_val'),
 (37, 9, 3, 'temp_name', 0, 2, 'text', 'selenium action', 'val222'),
 (38, 23, 1, 'temp_name', 0, 1, 'go to link', 'selenium action', 'https://demo.zeuz.ai/web/level/one/scenerios/login'),
-(39, 23, 2, 'temp_name', 0, 1, 'go to link', 'selenium action', 'asdasd');
+(39, 23, 2, 'temp_name', 0, 1, 'go to link', 'selenium action', 'asdasd'),
+(120, 25, 1, 'temp_name aa', 0, 1, 'go to link', 'selenium action', 'https://demo.zeuz.ai/web/level/one/scenerios/login'),
+(121, 25, 2, 'abcd', 1, 1, 'id', 'element parameter', 'username_id'),
+(122, 25, 2, 'abcd', 1, 2, 'text', 'selenium action', 'zeuzTest'),
+(123, 25, 3, 'temp_name', 1, 1, 'id', 'element parameter', 'password_id'),
+(124, 25, 3, 'temp_name', 1, 2, 'text', 'selenium action', 'zeuzPass');
 
 -- --------------------------------------------------------
 
@@ -67,18 +72,20 @@ CREATE TABLE `testcases` (
   `id` int(5) NOT NULL,
   `tc_name` varchar(255) NOT NULL,
   `tc_obj` text NOT NULL,
-  `tc_creation_date` datetime NOT NULL DEFAULT current_timestamp()
+  `tc_creation_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `tc_result` varchar(15) NOT NULL DEFAULT 'Not run yet',
+  `tc_duration` varchar(10) NOT NULL DEFAULT '0:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `testcases`
 --
 
-INSERT INTO `testcases` (`id`, `tc_name`, `tc_obj`, `tc_creation_date`) VALUES
-(9, 'sidebar', 'obj', '2022-06-01 18:18:46'),
-(15, 'dashboard', 'to test dashboard', '2022-06-01 18:29:50'),
-(23, 'a2', 'a2', '2022-06-02 12:29:51'),
-(24, 'riad', 'test riad', '2022-06-02 13:33:06');
+INSERT INTO `testcases` (`id`, `tc_name`, `tc_obj`, `tc_creation_date`, `tc_result`, `tc_duration`) VALUES
+(9, 'sidebar', 'obj', '2022-06-01 18:18:46', 'Not run yet', '0.00.00'),
+(15, 'dashboard', 'to test dashboard', '2022-06-01 18:29:50', 'Not run yet', '0.00.00'),
+(23, 'a2', 'a2', '2022-06-02 12:29:51', 'Blocked', '0:02:40'),
+(25, 'login test', 'to test login', '2022-06-19 21:16:19', 'Passed', '0:00:08');
 
 -- --------------------------------------------------------
 
@@ -89,7 +96,9 @@ INSERT INTO `testcases` (`id`, `tc_name`, `tc_obj`, `tc_creation_date`) VALUES
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(65) NOT NULL,
+  `api-key` varchar(30) NOT NULL,
+  `policy` varchar(15) NOT NULL DEFAULT 'tester',
   `run_status` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -97,8 +106,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `run_status`) VALUES
-(1, 'admin', 'admin', 'no');
+INSERT INTO `users` (`id`, `username`, `password`, `api-key`, `policy`, `run_status`) VALUES
+(1, 'admin', '$2y$10$bNIHFiXqtktpoo82iBdBVekjjIqxbFHNAqaUgJWj.sxPR9ecPbOgC', 'ntl1MC5NcdW7&kj8Pm70MmVx02A#nX', 'admin', 'no');
 
 --
 -- Indexes for dumped tables
@@ -130,13 +139,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `actions`
 --
 ALTER TABLE `actions`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
 
 --
 -- AUTO_INCREMENT for table `testcases`
 --
 ALTER TABLE `testcases`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users`

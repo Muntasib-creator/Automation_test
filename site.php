@@ -34,6 +34,7 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
         <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
         <input type="submit" value="Save">
     </form>
+    <button style="float:right" id="run">Run</button>
     <table>
         <thead>
             <th></th>
@@ -42,6 +43,7 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
             <th>Objective</th>
             <th>Result</th>
             <th>Duration</th>
+            <th><input type="checkbox" id="select_all"></th>
         </thead>
         <?php foreach($list_of_tc as $each): ?>
         <tr>
@@ -62,6 +64,7 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
             <td><?php echo $each["tc_obj"];?><br></td>
             <td><?php echo $each["tc_result"];?><br></td>
             <td><?php echo $each["tc_duration"];?><br></td>
+            <td><input type="checkbox" id="select" tc_id="<?php echo $each['id'];?>"><br></td>
         </tr>
         <?php endforeach; ?>
     </table>
@@ -75,4 +78,29 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
 </body>
 
 </html>
-<?php  ?>
+<script>
+    action_container = document.getElementsByTagName("body")[0];
+    action_container.addEventListener("click", task);
+    function task(e) {
+        if(e.target.tagName == "BUTTON" && e.target.getAttribute("id") == "run"){
+            inputs = document.getElementsByTagName("input");
+            checkboxes = []
+            for(i=0;i<inputs.length;i++){
+                if(inputs[i].getAttribute("id") == "select" && inputs[i].checked){
+                    checkboxes.push(parseInt(inputs[i].getAttribute("tc_id")));
+                }
+            }
+            url = `http://localhost/automation_test/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
+            window.location = url;
+        }
+        else if(e.target.tagName == "INPUT" && e.target.getAttribute("id") == "select_all"){
+            inputs = document.getElementsByTagName("input");
+            // console.log(inputs)
+            for(i=0;i<inputs.length;i++){
+                if(inputs[i].getAttribute("id") == "select"){
+                    inputs[i].checked = e.target.checked;
+                }
+            }
+        }
+    }
+</script>

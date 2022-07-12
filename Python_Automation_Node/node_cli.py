@@ -23,6 +23,7 @@ import sys, time, os.path, base64, signal, argparse, requests, zipfile
 from getpass import getpass
 from urllib3.exceptions import InsecureRequestWarning
 from tqdm import tqdm
+import copy
 
 # Suppress the InsecureRequestWarning since we use verify=False parameter.
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
@@ -1048,8 +1049,33 @@ def Bypass():
         print("[Bypass] Zeuz Node is online: %s" % testerid)
         RunProcess(testerid, user_info_object)
 
-
-json_data = [
+testcase_template = {
+    "testcase_no": "TEST-5103", #todo Done
+    "title": "muhib If element found",  #todo Done
+    "automatability": "Automated",
+    "debug_steps": [],
+    "testcase_attachments_links": [],
+    "steps": [
+        {
+            "step_id": 7458,
+            "step_name": "temp",
+            "step_sequence": 1,
+            "step_driver_type": "Built_In_Driver",
+            "automatablity": "automated",
+            "always_run": False,
+            "run_on_fail": False,
+            "step_function": "Sequential Actions",
+            "step_driver": "Built_In_Driver",
+            "type": "linked",
+            "step_attachments": [],
+            "verify_point": False,
+            "continue_on_fail": False,
+            "step_time": 59,
+            "actions": []   #todo done
+        }
+    ]
+}
+json_data_template = [
     {
         "run_id": "debug_admin",    #todo
         "release_version": "6.1.0",
@@ -1061,113 +1087,7 @@ json_data = [
         "is_linked": "",
         "device_info": {"browser_stack": {}},
         "test_cases": [
-            {
-                "testcase_no": "TEST-5103", #todo Done
-                "title": "muhib If element found",  #todo   Done
-                "automatability": "Automated",
-                "debug_steps": [],
-                "testcase_attachments_links": [],
-                "steps": [
-                    {
-                        "step_id": 7458,
-                        "step_name": "temp",
-                        "step_sequence": 1,
-                        "step_driver_type": "Built_In_Driver",
-                        "automatablity": "automated",
-                        "always_run": False,
-                        "run_on_fail": False,
-                        "step_function": "Sequential Actions",
-                        "step_driver": "Built_In_Driver",
-                        "type": "linked",
-                        "step_attachments": [],
-                        "verify_point": False,
-                        "continue_on_fail": False,
-                        "step_time": 59,
-                        "actions": [    #todo done
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "go to link",
-                                        "selenium action",
-                                        "https://demo.zeuz.ai/web/level/one/scenerios/login"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "username_id"
-                                    ],
-                                    [
-                                        "text",
-                                        "selenium action",
-                                        "zeuzTest"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "password_id"
-                                    ],
-                                    [
-                                        "text",
-                                        "selenium action",
-                                        "zeuzPass"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "signin_id"
-                                    ],
-                                    [
-                                        "click",
-                                        "selenium action",
-                                        "click"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "ignore case",
-                                        "optional parameter",
-                                        "yes"
-                                    ],
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "text_showing"
-                                    ],
-                                    [
-                                        "validate full text",
-                                        "selenium action",
-                                        "Login Successful"
-                                    ]
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
+
         ],
         "dependency_list": {
             "Browser": "Chrome",
@@ -1231,38 +1151,51 @@ def custom_run(log_dir=None):
         etime = time.time() + (30 * 60)  # 30 minutes
         while True:
             try:
-                if time.time() > etime:
-                    print("30 minutes over, logging in again")
-                    break
                 r = requests.get("%s/automation_test/deployment.php?username=%s" % (server_name, username)).json()
                 if r and "run_status" in r and r["run_status"] != "no":
                     PreProcess(log_dir=log_dir)
                     save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"
                     FL.CreateFolder(save_path, forced=True)
+                    json_data = copy.deepcopy(json_data_template)
 
                     if "run" in r["run_status"]:
                         json_data[0]["run_id"] = "run_admin"
 
-                    ac_data = r["action_data"]
+                    all_ac_data = r["action_data"]
+                    mod_all_ac_data = {}
+                    tc_id = ""
+                    for row in all_ac_data:
+                        if tc_id != row["tc_id"]:
+                            tc_id = row["tc_id"]
+                            mod_all_ac_data[tc_id] = [row]
+                        else:
+                            mod_all_ac_data[tc_id].append(row)
                     tc_data = r["tc_data"]
-                    json_data[0]["test_cases"][0]["title"] = tc_data["tc_name"]
-                    json_data[0]["test_cases"][0]["testcase_no"] = "TEST-" + "0"*(4-len(tc_data["id"])) + tc_data["id"]
-                    actions = []
-                    c = 0
-                    for i in ac_data:
-                        c = max(c, int(i["action_seq"]))
-                    for i in range(c):
-                        actions.append({
+                    for i in range(len(tc_data)): json_data[0]["test_cases"].append(copy.deepcopy(testcase_template))
+                    for i in range(len(tc_data)):
+                        json_data[0]["test_cases"][i]["title"] = tc_data[i]["tc_name"]
+                        json_data[0]["test_cases"][i]["testcase_no"] = "TEST-" + "0"*(4-len(tc_data[i]["id"])) + tc_data[i]["id"]
+                        actions = []
+                        if tc_data[i]["id"] not in mod_all_ac_data:
+                            json_data[0]["test_cases"][i]["steps"][0]["actions"] = []
+                            continue
+
+                        ac_data = mod_all_ac_data[tc_data[i]["id"]]
+                        c = 0
+                        for j in ac_data:
+                            c = max(c, int(j["action_seq"]))
+                        for j in range(c):
+                            actions.append({
                                 "action_name": None,
                                 "action_disabled": None,
                                 "step_actions": []
                             })
-                    for i in ac_data:
-                        actions[int(i["action_seq"])-1]["action_name"] = i["action_name"]
-                        actions[int(i["action_seq"])-1]["action_disabled"] = bool(int(i["action_disable"])) if "debug" in r["run_status"] else False
-                        actions[int(i["action_seq"])-1]["step_actions"].append([i["field"], i["sub_field"], i["value"]])
+                        for j in ac_data:
+                            actions[int(j["action_seq"])-1]["action_name"] = j["action_name"]
+                            actions[int(j["action_seq"])-1]["action_disabled"] = bool(int(j["action_disable"])) if "debug" in r["run_status"] else False
+                            actions[int(j["action_seq"])-1]["step_actions"].append([j["field"], j["sub_field"], j["value"]])
 
-                    json_data[0]["test_cases"][0]["steps"][0]["actions"] = actions
+                        json_data[0]["test_cases"][i]["steps"][0]["actions"] = actions
                     with open(save_path / f"{username}.json", 'w') as file:
                         file.write(json.dumps(json_data))
                     try:
@@ -1270,11 +1203,19 @@ def custom_run(log_dir=None):
                     except:
                         pass
                     upload_json_report(json_data[0]["run_id"])
+                    rich_print = Console().print
+                    rich_print("\nAuthentication successful")
+                    rich_print("SERVER = ", end="")
+                    rich_print(server_name, style="bold cyan")
+                    rich_print(":green_circle: " + username, style="bold cyan", end="")
+                    print(" is Online\n")
+
                 else:
                     time.sleep(3)
 
             except Exception as e:
                 CommonUtil.Exception_Handler(sys.exc_info())
+                print()
 
         return True
     except Exception as e:

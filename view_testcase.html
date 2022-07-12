@@ -207,11 +207,11 @@
         window.location = url;
     }
     function debug(e){
-        url = `http://localhost/automation_test/debug_run.php?tc_id=${tc_id}&run_status=debug`;
+        url = `http://localhost/automation_test/debug_run.php?tc_id=[${tc_id}]&run_status=debug`;
         window.location = url;
     }
     function run(e){
-        url = `http://localhost/automation_test/debug_run.php?tc_id=${tc_id}&run_status=run`;
+        url = `http://localhost/automation_test/debug_run.php?tc_id=[${tc_id}]&run_status=run`;
         window.location = url;
     }
     </script>
