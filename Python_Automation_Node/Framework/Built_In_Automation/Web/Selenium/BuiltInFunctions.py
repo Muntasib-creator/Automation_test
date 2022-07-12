@@ -757,7 +757,8 @@ def Go_To_Link(step_data, page_title=False):
 
     # default capabilities
     capabilities = {"unhandledPromptBehavior": "ignore"}
-    
+    result = ""
+
     # Open browser and create driver if user has not already done so
     global dependency
     global selenium_driver
