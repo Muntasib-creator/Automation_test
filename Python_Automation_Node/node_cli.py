@@ -1151,7 +1151,7 @@ def custom_run(log_dir=None):
         etime = time.time() + (30 * 60)  # 30 minutes
         while True:
             try:
-                r = requests.get("%s/automation_test/deployment.php?username=%s" % (server_name, username)).json()
+                r = requests.get("%s/automation_test/backend/deployment.php?username=%s" % (server_name, username)).json()
                 if r and "run_status" in r and r["run_status"] != "no":
                     PreProcess(log_dir=log_dir)
                     save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"

@@ -25,6 +25,6 @@
     $res = mysqli_query($conn, $save_q);
     echo $res;
 
-    header("Location: http://localhost/automation_test/fetch_actions.php?id=$tc_id");  
+    header("Location: /automation_test/backend/fetch_actions.php?id=$tc_id");  
 
 ?>

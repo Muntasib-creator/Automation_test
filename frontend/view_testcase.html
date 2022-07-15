@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>View</title>
     <style>
         input#action_name { 
             text-align: center; 
@@ -20,11 +20,20 @@
         }
         
     </style>
+    
 </head>
 
 <body>
+    <!-- <script src="jquery.js"></script> 
+    <script> 
+    $(function(){
+      $("#includeContent").load("/automation_test/nav.html"); 
+    });
+    </script>  -->
+    
+    <!-- <div w3-include-html="automation_test/nav.php"></div> -->
     <!-- <h4>viewing page of <?php echo $_GET["id"];?></h4> -->
-    <div><a href="http://localhost/automation_test/site.php">HomePage</a></div>
+    <div><a href="/automation_test/frontend/site.php">HomePage</a></div>
     <label for="cars">Choose an Action</label>
     <select name="cars" id="action_set">
     </select>
@@ -203,16 +212,18 @@
         }
         console.log(query);
         query = JSON.stringify(query);
-        url = `http://localhost/automation_test/save_actions.php?tc_id=${tc_id}&query=${query}`
+        url = `/automation_test/backend/save_actions.php?tc_id=${tc_id}&query=${query}`
         window.location = url;
     }
     function debug(e){
-        url = `http://localhost/automation_test/debug_run.php?tc_id=[${tc_id}]&run_status=debug`;
-        window.location = url;
+        url = `/automation_test/backend/debug_run.php?tc_id=[${tc_id}]&run_status=debug`;
+        //window.location = url;
+        fetch(url);
     }
     function run(e){
-        url = `http://localhost/automation_test/debug_run.php?tc_id=[${tc_id}]&run_status=run`;
-        window.location = url;
+        url = `/automation_test/backend/debug_run.php?tc_id=[${tc_id}]&run_status=run`;
+        //window.location = url;
+        fetch(url);
     }
     </script>
 </body>

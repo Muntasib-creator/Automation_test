@@ -10,5 +10,5 @@
     $list_of_actions = mysqli_fetch_all($res,MYSQLI_ASSOC);
     var_dump($list_of_actions);
     $list_of_actions = json_encode($list_of_actions);
-    header("Location: http://localhost/automation_test/view_testcase.html?data=$list_of_actions&tc_id=$tc_id");  
+    header("Location: /automation_test/frontend/view_testcase.html?data=$list_of_actions&tc_id=$tc_id");  
 ?>

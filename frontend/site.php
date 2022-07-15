@@ -1,20 +1,30 @@
 <?php
-    include 'db.php';
-    // include 'create_tc.php';
-
-// $conn = mysqli_connect($host,$user,$password,$db);
+include '../backend/db.php';
 if($conn->connect_error){
     die("DB Connection Failed " . $conn->connect_error);
 }
-// echo "DB connected";
-// $q = "insert into table(Name,Gender) values ('$name','$gender')";
-// mysqli_query($conn,$q);
+echo $_SERVER["REQUEST_METHOD"];
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+  var_dump($_POST);
+  if($_POST["task"] == "delete"){
+    $del = $_POST["tc_id"];
+    $q1 = "DELETE FROM testcases WHERE `testcases`.`id` = $del";
+    $res = mysqli_query($conn,$q1);
+  }
+  else if($_POST["task"] == "create"){
+    $tc_name = $_POST["tc_name"];
+    $tc_obj = $_POST["tc_obj"];
+    $q1 = "INSERT INTO `testcases` (`tc_name`, `tc_obj`, `tc_creation_date`) VALUES ('$tc_name', '$tc_obj', current_timestamp());";
+    $res = mysqli_query($conn,$q1);
+  }
+  
+}
 $q1 = "select * from testcases";
-$q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_creation_date`, `table_link` FROM `test_automation`.`testcases`";
+$q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_screation_date`, `table_link` FROM `test_automation`.`testcases`";
 $res = mysqli_query($conn, $q1);
 $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
-
-// echo var_dump($list_of_tc);
+session_start();
+// var_dump($_SESSION);
 ?>
 
 <!DOCTYPE html>
@@ -24,14 +34,15 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Automation</title>
+    <title>Home</title>
 </head>
 
 <body>
 
-    <form action="create_tc.php" method="GET">
+    <form action="/automation_test/backend/create_tc.php" method="GET">
         <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
         <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
+        <input type="hidden" name="task" value="create">
         <input type="submit" value="Save">
     </form>
     <button style="float:right" id="run">Run</button>
@@ -49,17 +60,15 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
         <tr>
             <td>
                 <div>
-                    <form action="delete_tc.php" name="delete_form"
-                        onsubmit="return confirm('Do you want to delete testcase?')" method="GET">
-                        <input type="submit" value="Delete" name="<?php echo $each["id"];?>"
-                            tc_id="<?php echo $each["id"];?>">
+                    <form action="/automation_test/frontend/site.php" name="delete_form"
+                        onsubmit="return confirm('Do you want to delete testcase?')" method="POST">
+                        <input type="hidden" name="tc_id" value="<?php echo $each["id"];?>">
+                        <input type="hidden" name="task" value="delete">
+                        <input type="submit" value="Delete" name="any">
                     </form>
                 </div>
             </td>
-            <!-- <td><a href="view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td> -->
-            <td><a
-                    href="http://localhost/automation_test/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
-            </td>
+            <td><a href="http://localhost/automation_test/backend/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
             <td><?php echo $each["tc_name"];?><br></td>
             <td><?php echo $each["tc_obj"];?><br></td>
             <td><?php echo $each["tc_result"];?><br></td>
@@ -68,13 +77,6 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
         </tr>
         <?php endforeach; ?>
     </table>
-    <h3>
-        <?php 
-        // echo create_tc();
-        ?>
-    </h3>
-
-
 </body>
 
 </html>
@@ -90,8 +92,10 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
                     checkboxes.push(parseInt(inputs[i].getAttribute("tc_id")));
                 }
             }
-            url = `http://localhost/automation_test/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
-            window.location = url;
+            url = `http://localhost/automation_test/backend/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
+            // window.location = url;
+            fetch(url);
+
         }
         else if(e.target.tagName == "INPUT" && e.target.getAttribute("id") == "select_all"){
             inputs = document.getElementsByTagName("input");

@@ -3,6 +3,7 @@
     if($conn->connect_error){
         die("DB Connection Failed " . $conn->connect_error);
     }
+
     $list_id = json_decode($_GET["tc_id"]);
     $run_status = $_GET["run_status"];
     $run_status = $run_status . '_' . json_encode($list_id);
@@ -19,6 +20,3 @@
     // }
 
 ?>
-<script>
-    window.history.back();
-</script>
