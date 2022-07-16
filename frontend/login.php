@@ -2,7 +2,6 @@
 $success = false;
 $showError = false;
 $exists = false;
-echo $_SERVER["REQUEST_METHOD"];
 if($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["signup"]) && $_GET["signup"] == "success"){
   $success = true;
 }
