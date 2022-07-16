@@ -1,3 +1,20 @@
+<?php 
+    include '../backend/db.php';
+    session_start();
+    if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+        header("location: login.php");
+        exit;
+    }
+    if($conn->connect_error){
+        die("DB Connection Failed " . $conn->connect_error);
+    }
+    $tc_id = $_GET["id"];
+    $q1 = "SELECT * FROM actions WHERE tc_id = '$tc_id' ORDER BY `actions`.`action_seq` ASC";
+    $res = mysqli_query($conn, $q1);
+    $list_of_actions = mysqli_fetch_all($res,MYSQLI_ASSOC);
+    $list_of_actions = json_encode($list_of_actions);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,20 +37,12 @@
         }
         
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     
 </head>
 
 <body>
-    <!-- <script src="jquery.js"></script> 
-    <script> 
-    $(function(){
-      $("#includeContent").load("/automation_test/nav.html"); 
-    });
-    </script>  -->
-    
-    <!-- <div w3-include-html="automation_test/nav.php"></div> -->
-    <!-- <h4>viewing page of <?php echo $_GET["id"];?></h4> -->
-    <div><a href="/automation_test/frontend/site.php">HomePage</a></div>
+    <?php include "nav.php"; ?>
     <label for="cars">Choose an Action</label>
     <select name="cars" id="action_set">
     </select>
@@ -51,8 +60,8 @@
     document.getElementById("run").addEventListener("click", run);
     document.getElementById("debug").addEventListener("click", debug);
     const urlParams = new URLSearchParams(window.location.search);
-    const data  = JSON.parse(urlParams.get('data'));
-    const tc_id  = JSON.parse(urlParams.get('tc_id'));
+    const data  = JSON.parse('<?php echo $list_of_actions; ?>');
+    const tc_id  = JSON.parse(urlParams.get('id'));
     console.log(data);
     
     let actions = new Array();
@@ -213,7 +222,8 @@
         console.log(query);
         query = JSON.stringify(query);
         url = `/automation_test/backend/save_actions.php?tc_id=${tc_id}&query=${query}`
-        window.location = url;
+        // window.location = url;
+        fetch(url);
     }
     function debug(e){
         url = `/automation_test/backend/debug_run.php?tc_id=[${tc_id}]&run_status=debug`;
@@ -226,6 +236,10 @@
         fetch(url);
     }
     </script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
 </body>
 
 </html>

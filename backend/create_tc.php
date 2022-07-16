@@ -1,4 +1,9 @@
 <?php
+    session_start();
+    if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+        header("location: login.php");
+        exit;
+}
     include 'db.php';
     function create_tc() {
         global $conn;
@@ -11,7 +16,7 @@
         echo var_dump($res);
     }
     create_tc();
-    // fopen('');http://localhost/php_learn/site.php?tc_name=dashboard&tc_obj=to+test+dashboard
-    header("Location: /automation_test/frontend/site.php");
-    // return file_get_contents('http://localhost/php_learn/site.php');
+    // fopen('');http://localhost/php_learn/home.php?tc_name=dashboard&tc_obj=to+test+dashboard
+    header("Location: /automation_test/frontend/home.php");
+    // return file_get_contents('http://localhost/php_learn/home.php');
 ?>

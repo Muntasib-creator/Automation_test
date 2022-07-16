@@ -9,14 +9,5 @@
     $run_status = $run_status . '_' . json_encode($list_id);
     $user = "admin";
     $update_q = "UPDATE users SET run_status = '$run_status' WHERE username = '$user';";
-    // echo $update_q;
     $res = mysqli_query($conn, $update_q);
-    // echo $res;
-    // if(count($list_id) == 1){
-    //     header("Location: http://localhost/automation_test/fetch_actions.php?id=$list_id[0]");  
-    // }
-    // elseif(count($list_id) > 1){
-    //     header("Location: http://localhost/automation_test/site.php");  
-    // }
-
 ?>

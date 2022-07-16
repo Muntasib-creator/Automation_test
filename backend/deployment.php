@@ -3,10 +3,33 @@
     if($conn->connect_error){
         die("DB Connection Failed " . $conn->connect_error);
     }
-    $username =  $_GET["username"];
-    $status_q = "SELECT * FROM users WHERE username = '$username';";
-    $res = mysqli_query($conn, $status_q);
-    $user = mysqli_fetch_all($res,MYSQLI_ASSOC)[0];
+    session_start();
+    if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["api-key"]) && isset($_POST["username"])){
+        $username =  $_POST["username"];
+        $api_key =  $_POST["api-key"];
+        $q = "SELECT * FROM `users` WHERE username = '$username' AND `api-key` = '$api_key';";
+        $res = mysqli_query($conn, $q);
+        $users = mysqli_fetch_all($res,MYSQLI_ASSOC);
+        if(count($users) == 0){
+            echo '{"res":"login fail"}';
+            exit;
+        }
+        else if($users[0]["loggedin"]== "false"){
+            echo '{"res":"You are not logged into the server"}';
+            exit;
+        }
+        $user = $users[0];
+    }
+    else if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+        header("location: login.php");
+        exit;
+    }
+    else{
+        $username =  $_GET["username"];
+        $status_q = "SELECT * FROM users WHERE username = '$username';";
+        $res = mysqli_query($conn, $status_q);
+        $user = mysqli_fetch_all($res,MYSQLI_ASSOC)[0];
+    }
     if($user["run_status"]!="no"){
         $tc_id = explode("_", $user["run_status"])[1];
         // $action_q = "SELECT * FROM actions WHERE tc_id IN (" . implode(',', json_encode($tc_id)) . ") ORDER BY `actions`.`action_seq` ASC";

@@ -1,4 +1,9 @@
 <?php 
+    session_start();
+    if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+        header("location: login.php");
+        exit;
+    }
     include 'db.php';
     if($conn->connect_error){
         die("DB Connection Failed " . $conn->connect_error);

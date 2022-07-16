@@ -1,4 +1,9 @@
 <?php 
+    session_start();
+    if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+        header("location: login.php");
+        exit;
+    }
     include 'db.php';
     if($conn->connect_error){
         die("DB Connection Failed " . $conn->connect_error);
@@ -25,6 +30,6 @@
     $res = mysqli_query($conn, $save_q);
     echo $res;
 
-    header("Location: /automation_test/backend/fetch_actions.php?id=$tc_id");  
+    header("Location: /automation_test/frontend/view_testcase.php?id=$tc_id");  
 
 ?>

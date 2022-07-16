@@ -20,8 +20,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       session_start();
       $_SESSION['loggedin'] = true;
       $_SESSION['username'] = $username;
-      $_SESSION['api-key'] = $user[0]["api-key"];
-      header("Location: /automation_test/frontend/site.php?id=$tc_id");  
+      // $_SESSION['api-key'] = $user[0]["api-key"];
+      $sql = "UPDATE users SET loggedin = 'true' WHERE username = '$username';";
+      $result = mysqli_query($conn, $sql);
+      if ($result){
+        header("Location: /automation_test/frontend/home.php?id=$tc_id");  
+      }
     }
     else{
         $showError = true;
@@ -40,7 +44,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script> -->
-    <?php require 'nav.html'; 
+    <?php require 'nav.php'; 
     if($success){
       echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
           <strong>Success!</strong> Your account is now created and you can login
@@ -63,13 +67,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <h3>Login to Test Automation</h3><br>
             <!-- Email input -->
             <div class="form-outline">
-              <input type="text" name="username" id="username" class="form-control" />
+              <input type="text" name="username" id="username" class="form-control">
               <label class="form-label" for="username">Username</label>
             </div>
           
             <!-- Password input -->
             <div class="form-outline">
-              <input type="password" name="password" id="password" class="form-control" />
+              <input type="password" name="password" id="password" class="form-control">
               <label class="form-label" for="password">Password</label>
             </div>
           

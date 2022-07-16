@@ -1137,21 +1137,37 @@ def custom_run(log_dir=None):
         device_dict = All_Device_Info.get_all_connected_device_info()
         rem_config = {"local_run": True}
         ConfigModule.remote_config = rem_config
-        username = ConfigModule.get_config_value(AUTHENTICATION_TAG, USERNAME_TAG)
-        password = ConfigModule.get_config_value(AUTHENTICATION_TAG, PASSWORD_TAG)
-        server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
-        from rich.console import Console
-        rich_print = Console().print
-        rich_print("\nAuthentication successful")
-        rich_print("SERVER = ", end="")
-        rich_print(server_name, style="bold cyan")
-        rich_print(":green_circle: " + username, style="bold cyan", end="")
-        print(" is Online\n")
 
-        etime = time.time() + (30 * 60)  # 30 minutes
+        login_log = True
         while True:
             try:
-                r = requests.get("%s/automation_test/backend/deployment.php?username=%s" % (server_name, username)).json()
+                username = ConfigModule.get_config_value(AUTHENTICATION_TAG, USERNAME_TAG)
+                password = ConfigModule.get_config_value(AUTHENTICATION_TAG, PASSWORD_TAG)
+                api_key = ConfigModule.get_config_value(AUTHENTICATION_TAG, "api-key")
+                server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
+                url = "%s/automation_test/backend/node_login.php" % server_name
+                res = requests.post(url, {"username": username, "api-key": api_key})
+                r = res.json()
+                if "successful" in r["res"].lower():
+                    if login_log:
+                        CommonUtil.ExecLog("[Login]", "Successfully Logged in with username = %s" % username, 1)
+                        from rich.console import Console
+                        rich_print = Console().print
+                        rich_print("\nAuthentication successful")
+                        rich_print("SERVER = ", end="")
+                        rich_print(server_name, style="bold cyan")
+                        rich_print(":green_circle: " + username, style="bold cyan", end="")
+                        print(" is Online\n")
+                        login_log = False
+                else:
+                    CommonUtil.ExecLog("[Login]", r["res"], 3)
+                    time.sleep(3)
+                    login_log = True
+                    continue
+
+                url = "%s/automation_test/backend/deployment.php" % (server_name)
+                res = requests.post(url, {"username": username, "api-key": api_key})
+                r = res.json()
                 if r and "run_status" in r and r["run_status"] != "no":
                     PreProcess(log_dir=log_dir)
                     save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"
@@ -1202,13 +1218,7 @@ def custom_run(log_dir=None):
                         MainDriverApi.main(device_dict, user_info_object)
                     except:
                         pass
-                    upload_json_report(json_data[0]["run_id"])
-                    rich_print = Console().print
-                    rich_print("\nAuthentication successful")
-                    rich_print("SERVER = ", end="")
-                    rich_print(server_name, style="bold cyan")
-                    rich_print(":green_circle: " + username, style="bold cyan", end="")
-                    print(" is Online\n")
+                    login_log = True
 
                 else:
                     time.sleep(3)

@@ -3,7 +3,11 @@ include '../backend/db.php';
 if($conn->connect_error){
     die("DB Connection Failed " . $conn->connect_error);
 }
-echo $_SERVER["REQUEST_METHOD"];
+session_start();
+if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+    header("location: login.php");
+    exit;
+}
 if($_SERVER["REQUEST_METHOD"] == "POST"){
   var_dump($_POST);
   if($_POST["task"] == "delete"){
@@ -23,8 +27,6 @@ $q1 = "select * from testcases";
 $q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_screation_date`, `table_link` FROM `test_automation`.`testcases`";
 $res = mysqli_query($conn, $q1);
 $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
-session_start();
-// var_dump($_SESSION);
 ?>
 
 <!DOCTYPE html>
@@ -35,10 +37,11 @@ session_start();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 
 <body>
-
+    <?php include "nav.php"; ?>
     <form action="/automation_test/backend/create_tc.php" method="GET">
         <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
         <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
@@ -60,7 +63,7 @@ session_start();
         <tr>
             <td>
                 <div>
-                    <form action="/automation_test/frontend/site.php" name="delete_form"
+                    <form action="/automation_test/frontend/home.php" name="delete_form"
                         onsubmit="return confirm('Do you want to delete testcase?')" method="POST">
                         <input type="hidden" name="tc_id" value="<?php echo $each["id"];?>">
                         <input type="hidden" name="task" value="delete">
@@ -68,7 +71,7 @@ session_start();
                     </form>
                 </div>
             </td>
-            <td><a href="http://localhost/automation_test/backend/fetch_actions.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
+            <td><a href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
             <td><?php echo $each["tc_name"];?><br></td>
             <td><?php echo $each["tc_obj"];?><br></td>
             <td><?php echo $each["tc_result"];?><br></td>
