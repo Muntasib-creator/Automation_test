@@ -1,34 +1,3 @@
-<?php
-include '../backend/db.php';
-if($conn->connect_error){
-    die("DB Connection Failed " . $conn->connect_error);
-}
-session_start();
-if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
-    header("location: login.php");
-    exit;
-}
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-  var_dump($_POST);
-  if($_POST["task"] == "delete"){
-    $del = $_POST["tc_id"];
-    $q1 = "DELETE FROM testcases WHERE `testcases`.`id` = $del";
-    $res = mysqli_query($conn,$q1);
-  }
-  else if($_POST["task"] == "create"){
-    $tc_name = $_POST["tc_name"];
-    $tc_obj = $_POST["tc_obj"];
-    $q1 = "INSERT INTO `testcases` (`tc_name`, `tc_obj`, `tc_creation_date`) VALUES ('$tc_name', '$tc_obj', current_timestamp());";
-    $res = mysqli_query($conn,$q1);
-  }
-  
-}
-$q1 = "select * from testcases";
-$q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_screation_date`, `table_link` FROM `test_automation`.`testcases`";
-$res = mysqli_query($conn, $q1);
-$list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,11 +6,41 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 
 <body>
-    <?php include "nav.php"; ?>
+
+    <?php
+        include 'nav.php';
+        if($conn->connect_error){
+            die("DB Connection Failed " . $conn->connect_error);
+        }
+        if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+            header("location: login.php");
+            exit;
+        }
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+        var_dump($_POST);
+        if($_POST["task"] == "delete"){
+            $del = $_POST["tc_id"];
+            $q1 = "DELETE FROM testcases WHERE `testcases`.`id` = $del";
+            $res = mysqli_query($conn,$q1);
+        }
+        else if($_POST["task"] == "create"){
+            $tc_name = $_POST["tc_name"];
+            $tc_obj = $_POST["tc_obj"];
+            $q1 = "INSERT INTO `testcases` (`tc_name`, `tc_obj`, `tc_creation_date`) VALUES ('$tc_name', '$tc_obj', current_timestamp());";
+            $res = mysqli_query($conn,$q1);
+        }
+        
+        }
+        $q1 = "select * from testcases";
+        $q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_screation_date`, `table_link` FROM `test_automation`.`testcases`";
+        $res = mysqli_query($conn, $q1);
+        $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
+    ?>
     <form action="/automation_test/backend/create_tc.php" method="GET">
         <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
         <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
@@ -71,7 +70,9 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
                     </form>
                 </div>
             </td>
-            <td><a href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a></td>
+            <td><a
+                    href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
+            </td>
             <td><?php echo $each["tc_name"];?><br></td>
             <td><?php echo $each["tc_obj"];?><br></td>
             <td><?php echo $each["tc_result"];?><br></td>
@@ -84,30 +85,32 @@ $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
 
 </html>
 <script>
-    action_container = document.getElementsByTagName("body")[0];
-    action_container.addEventListener("click", task);
-    function task(e) {
-        if(e.target.tagName == "BUTTON" && e.target.getAttribute("id") == "run"){
-            inputs = document.getElementsByTagName("input");
-            checkboxes = []
-            for(i=0;i<inputs.length;i++){
-                if(inputs[i].getAttribute("id") == "select" && inputs[i].checked){
-                    checkboxes.push(parseInt(inputs[i].getAttribute("tc_id")));
-                }
-            }
-            url = `http://localhost/automation_test/backend/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
-            // window.location = url;
-            fetch(url);
+action_container = document.getElementsByTagName("body")[0];
+action_container.addEventListener("click", task);
 
+function task(e) {
+    console.log(e.target);
+    if (e.target.tagName == "BUTTON" && e.target.getAttribute("id") == "run") {
+        inputs = document.getElementsByTagName("input");
+        checkboxes = []
+        for (i = 0; i < inputs.length; i++) {
+            if (inputs[i].getAttribute("id") == "select" && inputs[i].checked) {
+                checkboxes.push(parseInt(inputs[i].getAttribute("tc_id")));
+            }
         }
-        else if(e.target.tagName == "INPUT" && e.target.getAttribute("id") == "select_all"){
-            inputs = document.getElementsByTagName("input");
-            // console.log(inputs)
-            for(i=0;i<inputs.length;i++){
-                if(inputs[i].getAttribute("id") == "select"){
-                    inputs[i].checked = e.target.checked;
-                }
+        url =
+            `http://localhost/automation_test/backend/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
+        // window.location = url;
+        fetch(url);
+
+    } else if (e.target.tagName == "INPUT" && e.target.getAttribute("id") == "select_all") {
+        inputs = document.getElementsByTagName("input");
+        // console.log(inputs)
+        for (i = 0; i < inputs.length; i++) {
+            if (inputs[i].getAttribute("id") == "select") {
+                inputs[i].checked = e.target.checked;
             }
         }
     }
+}
 </script>
