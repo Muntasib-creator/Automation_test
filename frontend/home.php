@@ -9,9 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
-
 <body>
-
     <?php
         include 'nav.php';
         if($conn->connect_error){
@@ -22,64 +20,67 @@
             exit;
         }
         if($_SERVER["REQUEST_METHOD"] == "POST"){
-        var_dump($_POST);
-        if($_POST["task"] == "delete"){
-            $del = $_POST["tc_id"];
-            $q1 = "DELETE FROM testcases WHERE `testcases`.`id` = $del";
-            $res = mysqli_query($conn,$q1);
-        }
-        else if($_POST["task"] == "create"){
-            $tc_name = $_POST["tc_name"];
-            $tc_obj = $_POST["tc_obj"];
-            $q1 = "INSERT INTO `testcases` (`tc_name`, `tc_obj`, `tc_creation_date`) VALUES ('$tc_name', '$tc_obj', current_timestamp());";
-            $res = mysqli_query($conn,$q1);
-        }
-        
+            if($_POST["task"] == "delete"){
+                $del = $_POST["tc_id"];
+                $q1 = "DELETE FROM testcases WHERE `testcases`.`id` = $del";
+                $res = mysqli_query($conn,$q1);
+            }
+            else if($_POST["task"] == "create"){
+                $tc_name = $_POST["tc_name"];
+                $tc_obj = $_POST["tc_obj"];
+                $q1 = "INSERT INTO `testcases` (`tc_name`, `tc_obj`, `tc_creation_date`) VALUES ('$tc_name', '$tc_obj', current_timestamp());";
+                $res = mysqli_query($conn,$q1);
+            }
         }
         $q1 = "select * from testcases";
         $q2 = "SELECT `id`, `tc_name`, `tc_obj`, `tc_screation_date`, `table_link` FROM `test_automation`.`testcases`";
         $res = mysqli_query($conn, $q1);
         $list_of_tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
     ?>
-    <form action="/automation_test/backend/create_tc.php" method="GET">
-        <input name="tc_name" type="text" placeholder="Enter Testcase name"><br>
-        <input name="tc_obj" type="text" placeholder="Write testcase objective"><br>
-        <input type="hidden" name="task" value="create">
-        <input type="submit" value="Save">
-    </form>
-    <button style="float:right" id="run">Run</button>
-    <table>
-        <thead>
-            <th></th>
+    <div class="container my-5 d-flex justify-content-center">
+        <form action="/automation_test/backend/create_tc.php" method="GET">
+            <input class="form-control my-1" name="tc_name" type="text" placeholder="Enter Testcase name">
+            <input class="form-control my-1" name="tc_obj" type="text" placeholder="Write testcase objective">
+            <input type="hidden" name="task" value="create">
+            <input class="btn btn-outline-primary" type="submit" value="Save" class="d-flex justify-content-center">
+        </form>
+    </div>
+    <!-- <button  class="btn btn-outline-success" style="float:right" id="run">Run</button> -->
+    <table class="table table-striped" style="table-layout:fixed">
+        <thead class="table-light">
+            <th><button  class="btn btn-outline-success" id="run">Run</button></th>
             <th>ID</th>
             <th>Title</th>
-            <th>Objective</th>
+            <th width="30%">Objective</th>
             <th>Result</th>
             <th>Duration</th>
-            <th><input type="checkbox" id="select_all"></th>
+            <th><input class="form-check-input" type="checkbox" id="select_all"></th>
         </thead>
-        <?php foreach($list_of_tc as $each): ?>
-        <tr>
-            <td>
-                <div>
-                    <form action="/automation_test/frontend/home.php" name="delete_form"
-                        onsubmit="return confirm('Do you want to delete testcase?')" method="POST">
-                        <input type="hidden" name="tc_id" value="<?php echo $each["id"];?>">
-                        <input type="hidden" name="task" value="delete">
-                        <input type="submit" value="Delete" name="any">
-                    </form>
-                </div>
-            </td>
-            <td><a
-                    href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
-            </td>
-            <td><?php echo $each["tc_name"];?><br></td>
-            <td><?php echo $each["tc_obj"];?><br></td>
-            <td><?php echo $each["tc_result"];?><br></td>
-            <td><?php echo $each["tc_duration"];?><br></td>
-            <td><input type="checkbox" id="select" tc_id="<?php echo $each['id'];?>"><br></td>
-        </tr>
-        <?php endforeach; ?>
+        <tbody>
+            <?php foreach($list_of_tc as $each): ?>
+            <tr>
+                <td>
+                    <div>
+                        <form action="/automation_test/frontend/home.php" name="delete_form"
+                            onsubmit="return confirm('Do you want to delete testcase?')" method="POST">
+                            <input type="hidden" name="tc_id" value="<?php echo $each["id"];?>">
+                            <input type="hidden" name="task" value="delete">
+                            <input class="btn btn-outline-danger" type="submit" value="Delete" name="any">
+                        </form>
+                    </div>
+                </td>
+                <td><a
+                        href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
+                </td>
+                <td><?php echo $each["tc_name"];?><br></td>
+                <td><?php echo $each["tc_obj"];?><br></td>
+                <td><?php echo $each["tc_result"];?><br></td>
+                <td><?php echo $each["tc_duration"];?><br></td>
+                <td><input class="form-check-input" type="checkbox" id="select" tc_id="<?php echo $each['id'];?>"><br></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+        
     </table>
 </body>
 
@@ -89,7 +90,7 @@ action_container = document.getElementsByTagName("body")[0];
 action_container.addEventListener("click", task);
 
 function task(e) {
-    console.log(e.target);
+    // console.log(e.target);
     if (e.target.tagName == "BUTTON" && e.target.getAttribute("id") == "run") {
         inputs = document.getElementsByTagName("input");
         checkboxes = []

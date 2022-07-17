@@ -23,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <button class="btn btn-outline-success" id="generate">Generate API-key</button>
+                    <button class="btn btn-outline-info" id="generate">Generate API-key</button>
                 </li>
                 <li class="nav-item">
                     <p class="my-2 mx-2">api-key:</p>
@@ -32,6 +32,7 @@
                     <p class="my-2" id="api-key"><?php echo $api_key;?></p>
                 </li>
             </ul>
+            <a class="btn btn-outline-primary mx-3" href="/automation_test/frontend/profile.php"><?php echo $username; ?></a>
             <a class="btn btn-outline-danger" href="/automation_test/backend/logout.php">Logout</a>
 
         </div>
@@ -41,11 +42,38 @@
 el = document.getElementById("generate");
 el.addEventListener("click", display_api_key);
 
+
 function display_api_key(e) {
     if (e.target.tagName == "BUTTON" && e.target.getAttribute("id") == "generate") {
         console.log("dhukse");
-        document.getElementById("api-key").innerText =
-            '<?php echo p_generate($username, $conn); ?>' //JSON.parse('"hello"');
-    }
+        async function modify_elem(){
+            response = await fetch("/automation_test/backend/generate_api-key.php", {
+                method: 'POST',
+                // headers: {
+                // 'Content-Type': 'application/json'
+                // // 'Content-Type': 'application/x-www-form-urlencoded',
+                // },
+                // body: JSON.stringify(data) // body data type must match "Content-Type" header
+            })
+            console.log(response);
+            document.getElementById("api-key").innerText ='';
+        }
+        // modify_elem();
+        fetch("/automation_test/backend/generate_api-key.php", {
+                method: 'POST',
+                // headers: {
+                // 'Content-Type': 'application/json'
+                // // 'Content-Type': 'application/x-www-form-urlencoded',
+                // },
+                // body: JSON.stringify(data) // body data type must match "Content-Type" header
+        }).then((response) => {
+            return response.text();
+        }).then((data)=>{
+            document.getElementById("api-key").innerText = data;
+
+        })
+            
+        }
 }
+
 </script>
