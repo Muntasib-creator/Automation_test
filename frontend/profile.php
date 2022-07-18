@@ -21,43 +21,63 @@
             exit;
         }
         $showError = false;
-        $exists = false;
-        echo $_SERVER["REQUEST_METHOD"];
+        $matched = true;
+        $success = false;
+        $changed = true;
+
         if($_SERVER["REQUEST_METHOD"] == "POST"){
             $username = $_SESSION["username"];
-            $password = $_POST["password"];
+            $cur_password = $_POST["cur_password"];
+            $npassword = $_POST["npassword"];
             $cpassword = $_POST["cpassword"];
             $q = "SELECT * FROM users WHERE username = '$username';";
             $res = mysqli_query($conn, $q);
             $user = mysqli_fetch_all($res,MYSQLI_ASSOC);
-            if(count($user) > 0){
-            $exists = true;
-            }
-            if(($password == $cpassword) && !$exists){
-                $p = password_hash($password, PASSWORD_DEFAULT);
-                $apikey = generateRandomString(30);
-
-                $sql = "INSERT INTO `users` ( `username`, `password`, `api-key`) VALUES ('$username', '$p', '$apikey')";
-                $result = mysqli_query($conn, $sql);
-                if ($result){
-                header("Location: /automation_test/frontend/login.php?signup=success");  
-                }
-            }
-            else{
+            if(count($user) == 0 || !password_verify($cur_password, $user[0]["password"])){
                 $showError = true;
             }
+            else if($npassword == $cur_password){
+                $changed = false;
+            }
+            else if($npassword != $cpassword){
+                $matched = false;
+            }
+            else{
+                $p = password_hash($npassword, PASSWORD_DEFAULT);
+                $q = "UPDATE users SET `password` = '$p' WHERE `username`='$username';";
+                $res = mysqli_query($conn, $q);
+                if($res){
+                    $success = true;
+                }
+            }
         }
-        if($exists){
-            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Warning!</strong> This Username already exists
+        if($showError){
+            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Warning!</strong> Current Password did not match
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>';
         }
-        else if($showError){
-            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Error!</strong> Passwords do not match
+        else if(!$changed){
+            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Warning!</strong> Current password cant be the New password cant 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>';
+        }
+        else if(!$matched){
+            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Warning!</strong> Confirm Password did not match
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>';
+        }
+        else if($success){
+            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> Password changed successfully
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -65,18 +85,18 @@
         }
     ?>
     <div class="container my-5 d-flex justify-content-center">
-        <form action="/automation_test/frontend/signup.php" method="post">
-            <h3>Sign up to Test Automation</h1><br>
+        <form action="/automation_test/frontend/profile.php" method="post">
+            <h3>Want to change password?</h1><br>
                 <!-- Email input -->
                 <div class="form-outline">
-                    <input type="text" name="username" id="username" class="form-control" />
-                    <label class="form-label" for="username">Username</label>
+                    <input type="text" name="cur_password" id="cur_password" class="form-control" />
+                    <label class="form-label" for="cur_password">Current Password</label>
                 </div>
 
                 <!-- Password input -->
                 <div class="form-outline">
-                    <input type="password" name="password" id="password" class="form-control" />
-                    <label class="form-label" for="password">Password</label>
+                    <input type="password" name="npassword" id="npassword" class="form-control" />
+                    <label class="form-label" for="npassword">New Password</label>
                 </div>
 
                 <!-- Confirm Password input -->
@@ -85,13 +105,9 @@
                     <label class="form-label" for="cpassword">Confirm Password</label>
                 </div>
 
-                <!-- 2 column grid layout for inline styling -->
-                <div class="">
-                    <p>Already signed up? <a href="/automation_test/frontend/login.php">Login</a></p>
-                </div>
-
                 <!-- Submit button -->
-                <button type="submit" class="btn btn-primary btn-block mb-4">Sign up</button>
+                <button type="submit" class="btn btn-primary btn-block mb-4">Change Password</button>
+                <button type="submit" class="btn btn-danger btn-block mb-4">Delete Account</button>
 
                 <!-- Register buttons -->
 
