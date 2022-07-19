@@ -1219,7 +1219,7 @@ def custom_run(log_dir=None):
                     except:
                         pass
                     login_log = True
-
+                    upload_json_report(json_data[0]["run_id"], username, api_key)
                 else:
                     time.sleep(3)
 
@@ -1232,7 +1232,7 @@ def custom_run(log_dir=None):
         CommonUtil.Exception_Handler(sys.exc_info())
 
 
-def upload_json_report(run_id):
+def upload_json_report(run_id, username, api_key):
     try:
         if CommonUtil.debug_status: return
         server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
@@ -1246,11 +1246,13 @@ def upload_json_report(run_id):
             tc_no = int(tc["testcase_no"].split("-")[-1])
             report.append([tc_no, tc["execution_detail"]["status"], tc["execution_detail"]["duration"]])
         try:
-            res = requests.get("%s/automation_test/report.php?report=%s" % (server_name, json.dumps(report))).json()
-            if res["res"] == "ok":
+            url = "%s/automation_test/backend/report.php" % server_name
+            res = requests.post(url, {"username": username, "api-key": api_key, "report": json.dumps(report)})
+            r = res.json()
+            if r["res"] == "ok":
                 CommonUtil.ExecLog("[Report]", "Successfully Uploaded the report", 1)
             else:
-                CommonUtil.ExecLog("[Report]", "Could not upload the report", 3)
+                CommonUtil.ExecLog("[Report]", r["res"], 3)
         except:
             CommonUtil.ExecLog("[Report]", "Could not upload the report", 3)
             CommonUtil.Exception_Handler(sys.exc_info())
