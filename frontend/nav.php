@@ -32,7 +32,8 @@
                     <p class="border border-primary my-2 px-2" id="api-key"><?php echo $api_key;?></p>
                 </li>
             </ul>
-            <a class="btn btn-outline-primary mx-3" href="/automation_test/frontend/profile.php"><?php echo $username; ?></a>
+            <a class="btn btn-outline-primary mx-3"
+                href="/automation_test/frontend/profile.php"><?php echo $username; ?></a>
             <a class="btn btn-outline-danger" href="/automation_test/backend/logout.php">Logout</a>
 
         </div>
@@ -41,13 +42,14 @@
 <script>
 el = document.getElementById("generate");
 el.addEventListener("click", display_api_key);
+
 function display_api_key(e) {
     if (e.target.tagName == "BUTTON" && e.target.getAttribute("id") == "generate") {
         fetch("/automation_test/backend/generate_api-key.php", {
             method: 'POST'
         }).then((response) => {
             return response.text();
-        }).then((data)=>{
+        }).then((data) => {
             document.getElementById("api-key").innerText = data;
         })
     }

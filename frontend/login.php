@@ -67,14 +67,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <h3>Login to Test Automation</h3><br>
             <!-- Email input -->
             <div class="form-outline">
-                <input type="text" name="username" id="username" class="form-control">
                 <label class="form-label" for="username">Username</label>
+                <input type="text" name="username" id="username" class="form-control">
             </div>
 
             <!-- Password input -->
             <div class="form-outline">
-                <input type="password" name="password" id="password" class="form-control">
                 <label class="form-label" for="password">Password</label>
+                <input type="password" name="password" id="password" class="form-control">
             </div>
 
             <!-- 2 column grid layout for inline styling -->

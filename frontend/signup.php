@@ -1,7 +1,8 @@
 <?php
 $showError = false;
 $exists = false;
-echo $_SERVER["REQUEST_METHOD"];
+$invalid = false;
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     include '../backend/db.php';
     $username = $_POST["username"];
@@ -13,7 +14,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(count($user) > 0){
       $exists = true;
     }
-    if(($password == $cpassword) && !$exists){
+    else if(!(preg_match('/[A-Za-z]/', $password) && preg_match('/[0-9]/', $password)) || strlen( $password) < 8){
+      $invalid = true;
+    }
+    else if(($password == $cpassword) && !$exists){
         $p = password_hash($password, PASSWORD_DEFAULT);
         $apikey = generateRandomString(30);
 
@@ -52,6 +56,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             </button>
         </div>';
       }
+      else if($invalid){
+        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> Passwords must contain Numbers and Letters and should be of atleast 8 characters
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>';
+      }
       else if($showError){
         echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Error!</strong> Passwords do not match
@@ -66,20 +78,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <h3>Sign up to Test Automation</h1><br>
                 <!-- Email input -->
                 <div class="form-outline">
-                    <input type="text" name="username" id="username" class="form-control" />
                     <label class="form-label" for="username">Username</label>
+                    <input type="text" name="username" id="username" class="form-control" />
                 </div>
 
                 <!-- Password input -->
                 <div class="form-outline">
-                    <input type="password" name="password" id="password" class="form-control" />
                     <label class="form-label" for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control" />
                 </div>
 
                 <!-- Confirm Password input -->
                 <div class="form-outline">
-                    <input type="password" name="cpassword" id="cpassword" class="form-control" />
                     <label class="form-label" for="cpassword">Confirm Password</label>
+                    <input type="password" name="cpassword" id="cpassword" class="form-control" />
                 </div>
 
                 <!-- 2 column grid layout for inline styling -->

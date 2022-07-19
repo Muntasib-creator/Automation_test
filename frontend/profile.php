@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 
@@ -24,6 +23,7 @@
         $matched = true;
         $success = false;
         $changed = true;
+        $invalid = false;
 
         if($_SERVER["REQUEST_METHOD"] == "POST"){
             $username = $_SESSION["username"];
@@ -36,6 +36,9 @@
             if(count($user) == 0 || !password_verify($cur_password, $user[0]["password"])){
                 $showError = true;
             }
+            else if(!(preg_match('/[A-Za-z]/', $password) && preg_match('/[0-9]/', $password)) || strlen( $password) < 8){
+                $invalid = true;
+            }                 
             else if($npassword == $cur_password){
                 $changed = false;
             }
@@ -54,6 +57,14 @@
         if($showError){
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Warning!</strong> Current Password did not match
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>';
+        }
+        else if($invalid){
+            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> Passwords must contain Numbers and Letters and should be of atleast 8 characters
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -107,12 +118,23 @@
 
                 <!-- Submit button -->
                 <button type="submit" class="btn btn-primary btn-block mb-4">Change Password</button>
-                <button type="submit" class="btn btn-danger btn-block mb-4">Delete Account</button>
+                <button type="button" class="btn btn-danger btn-block mb-4" id="remove">Delete Account</button>
 
                 <!-- Register buttons -->
 
         </form>
     </div>
+    <script>
+        document.getElementById("remove").addEventListener("click", _fetch);
+        function _fetch(){
+            if(confirm("Are you sure, you want to delete your account permanently?")){
+                fetch("/automation_test/backend/remove_profile.php", {method: 'POST'})
+                url = `/automation_test/frontend/login.php`;
+                // url = `/automation_test/backend/remove_profile.php`;
+                window.location = url;
+            }
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
     </script>

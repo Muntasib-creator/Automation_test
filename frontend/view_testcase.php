@@ -1,19 +1,4 @@
-<?php 
-    include '../backend/db.php';
-    session_start();
-    if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
-        header("location: login.php");
-        exit;
-    }
-    if($conn->connect_error){
-        die("DB Connection Failed " . $conn->connect_error);
-    }
-    $tc_id = $_GET["id"];
-    $q1 = "SELECT * FROM actions WHERE tc_id = '$tc_id' ORDER BY `actions`.`action_seq` ASC";
-    $res = mysqli_query($conn, $q1);
-    $list_of_actions = mysqli_fetch_all($res,MYSQLI_ASSOC);
-    $list_of_actions = json_encode($list_of_actions);
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +27,21 @@
 </head>
 
 <body>
-    <?php include "nav.php"; ?>
+    <?php 
+        include 'nav.php';
+        if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
+            header("location: login.php");
+            exit;
+        }
+        if($conn->connect_error){
+            die("DB Connection Failed " . $conn->connect_error);
+        }
+        $tc_id = $_GET["id"];
+        $q1 = "SELECT * FROM actions WHERE tc_id = '$tc_id' ORDER BY `actions`.`action_seq` ASC";
+        $res = mysqli_query($conn, $q1);
+        $list_of_actions = mysqli_fetch_all($res,MYSQLI_ASSOC);
+        $list_of_actions = json_encode($list_of_actions);
+    ?>
     <label for="cars">Choose an Action</label>
     <select name="cars" id="action_set">
     </select>

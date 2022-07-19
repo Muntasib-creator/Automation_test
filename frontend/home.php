@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
+
 <body>
     <?php
         include 'nav.php';
@@ -48,7 +49,7 @@
     <!-- <button  class="btn btn-outline-success" style="float:right" id="run">Run</button> -->
     <table class="table table-striped" style="table-layout:fixed">
         <thead class="table-light">
-            <th><button  class="btn btn-outline-success" id="run">Run</button></th>
+            <th><button class="btn btn-outline-success" id="run">Run</button></th>
             <th>ID</th>
             <th>Title</th>
             <th width="30%">Objective</th>
@@ -69,18 +70,18 @@
                         </form>
                     </div>
                 </td>
-                <td><a
-                        href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
+                <td><a class="text-decoration-none" href="http://localhost/automation_test/frontend/view_testcase.php?id=<?php echo "".$each["id"];?>"><?php echo "TEST-".$each["id"];?></a>
                 </td>
                 <td><?php echo $each["tc_name"];?><br></td>
                 <td><?php echo $each["tc_obj"];?><br></td>
                 <td><?php echo $each["tc_result"];?><br></td>
                 <td><?php echo $each["tc_duration"];?><br></td>
-                <td><input class="form-check-input" type="checkbox" id="select" tc_id="<?php echo $each['id'];?>"><br></td>
+                <td><input class="form-check-input" type="checkbox" id="select" tc_id="<?php echo $each['id'];?>"><br>
+                </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
-        
+
     </table>
 </body>
 
@@ -99,8 +100,7 @@ function task(e) {
                 checkboxes.push(parseInt(inputs[i].getAttribute("tc_id")));
             }
         }
-        url =
-            `http://localhost/automation_test/backend/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
+        url = `http://localhost/automation_test/backend/debug_run.php?tc_id=${JSON.stringify(checkboxes)}&run_status=run`;
         // window.location = url;
         fetch(url);
 
