@@ -1096,11 +1096,7 @@ json_data_template = [
         "debug": "yes",     #todo
         "debug_clean": "NO",    #todo
         "debug_step_actions": [ #todo
-            "1",
-            "2",
-            "3",
-            "4",
-            "5"
+
         ],
         "debug_steps": [
             "1"
@@ -1244,7 +1240,11 @@ def upload_json_report(run_id, username, api_key):
         report = []
         for tc in json_report[0]["test_cases"]:
             tc_no = int(tc["testcase_no"].split("-")[-1])
-            report.append([tc_no, tc["execution_detail"]["status"], tc["execution_detail"]["duration"]])
+            if "block" in tc["execution_detail"]["status"].lower() or "fail" in tc["execution_detail"]["status"].lower() :
+                status = "Failed"
+            else:
+                status = tc["execution_detail"]["status"]
+            report.append([tc_no, status, tc["execution_detail"]["duration"]])
         try:
             url = "%s/automation_test/backend/report.php" % server_name
             res = requests.post(url, {"username": username, "api-key": api_key, "report": json.dumps(report)})

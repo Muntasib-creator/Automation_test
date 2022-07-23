@@ -950,11 +950,7 @@ def Run_Sequential_Actions(
             return "zeuz_failed", skip_for_loop
         if data_set_list == []:  # run the full step data
             for i in range(len(step_data)):
-                if debug_actions:
-                    if str(i + 1) in debug_actions:
-                        data_set_list.append(i)
-                else:
-                    data_set_list.append(i)
+                data_set_list.append(i)
 
         for dataset_cnt in data_set_list:  # For each data set within step data
             data_set = step_data[dataset_cnt]  # Save data set to variable

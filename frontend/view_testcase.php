@@ -41,6 +41,7 @@
         $res = mysqli_query($conn, $q1);
         $list_of_actions = mysqli_fetch_all($res,MYSQLI_ASSOC);
         $list_of_actions = json_encode($list_of_actions);
+        // echo $list_of_actions;
         $q2 = "SELECT * FROM testcases WHERE id = '$tc_id';";
         $res = mysqli_query($conn, $q2);
         $tc = mysqli_fetch_all($res,MYSQLI_ASSOC);
@@ -85,6 +86,7 @@
     const data  = JSON.parse('<?php echo $list_of_actions; ?>');
     const tc_id  = JSON.parse(urlParams.get('id'));
     console.log(data);
+    document.getElementsByTagName("title")[0].innerText = "View-" + tc_id
     
     let actions = new Array();
     for (let i = 0; i < data.length; i++) {
@@ -111,7 +113,7 @@
     };
     console.log(actions);
     table_class = 'class="table table-bordered" style="border-radius: 10px; margin-bottom:50px"';
-    input_action_name_class = 'style="background-color: #E6E6FA; border-radius: 5px;"';
+    input_action_name_class = 'style="background-color: #E6E6FA; border-radius: 5px;margin-left:10px"';
     thead_class = 'class="thead-dark" style="background-color: #E6E6FA";';
     cell_class = 'style="background-color: #F5F5F5; border-radius: 5px;"';
     tbody_class = 'style="background-color: #F5F5F5"';   
@@ -147,16 +149,52 @@
     }
     ac_num = i;
     action_db = {
-        go_to_link:[
+        WEB_go_to_link:[
             ["go to link", "selenium action", "https://demo.zeuz.ai/web/level/one/scenerios/login"],
         ],
-        click:[
+        WEB_click:[
             ["att_name", "element parameter", "att_val"],
             ["click", "selenium action", "click"],
         ],
-        enter_text:[
+        WEB_enter_text:[
             ["att_name", "element parameter", "att_val"],
             ["text", "selenium action", "val"],
+        ],
+        WEB_save_attribute:[
+            ["att_name", "element parameter", "att_val"],
+            ["text", "save parameter", "var_name"],
+            ["save attribute", "selenium action", "save attribute"],
+        ],
+        WIN_launch_app:[
+            ["open app", "windows action", "calculator"],
+        ],
+        WIN_click:[
+            ["**window", "element parameter", "calculator"],
+            ["automationid", "element parameter", "id_val"],
+            ["click", "windows action", "click"],
+        ],
+        WIN_enter_text:[
+            ["**window", "element parameter", "calculator"],
+            ["automationid", "element parameter", "id_val"],
+            ["text", "windows action", "val"],
+        ],
+        WIN_save_attribute:[
+            ["**window", "element parameter", "calculator"],
+            ["automationid", "element parameter", "att_val"],
+            ["text", "save parameter", "var_name"],
+            ["save attribute", "windows action", "save attribute"],
+        ],
+        COM_compare:[
+            ["left", "element parameter", "right"],
+            ["compare variable", "common action", "exact match"],
+        ],
+        COM_save_variable:[
+            ["data", "element parameter", "[1,2,3]"],
+            ["operatoin", "element parameter", "save"],
+            ["save into variable", "common action", "var_name"],
+        ],
+        COM_sleep:[
+            ["sleep", "common action", "5"],
         ],
         
     }
@@ -166,8 +204,6 @@
         <td width="45%" test="value"><textarea ${cell_class} name="" id=""></textarea></td>
         <td width="5%"><button ${row_del_class} test="del_row">del</button></td></tr>
         `
-    
-    
     let select = document.getElementById("action_set");
     action_datasets = {}
     for (var key of Object.keys(action_db)) {

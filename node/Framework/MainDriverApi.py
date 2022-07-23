@@ -658,7 +658,7 @@ def run_all_test_steps_in_a_test_case(
 def calculate_test_case_result(sModuleInfo, TestCaseID, run_id, sTestStepResultList, testcase_info):
     if "BLOCKED" in sTestStepResultList:
         CommonUtil.ExecLog(sModuleInfo, "Test Case Blocked", 3)
-        sTestCaseStatus = "Blocked"
+        sTestCaseStatus = "failed"
     elif "CANCELLED" in sTestStepResultList or "Cancelled" in sTestStepResultList:
         CommonUtil.ExecLog(sModuleInfo, "Test Case Cancelled", 3)
         sTestCaseStatus = "Cancelled"
@@ -671,7 +671,7 @@ def calculate_test_case_result(sModuleInfo, TestCaseID, run_id, sTestStepResultL
                     break
             step_index += 1
         else:
-            sTestCaseStatus = "Blocked"
+            sTestCaseStatus = "failed"
         CommonUtil.ExecLog(sModuleInfo, "Test Case " + sTestCaseStatus, 3)
 
     elif "WARNING" in sTestStepResultList:
@@ -925,7 +925,7 @@ def run_test_case(
         TimeDiff = TestCaseEndTime - TestCaseStartTime
         TimeInSec = int(TimeDiff)
         TestCaseDuration = CommonUtil.FormatSeconds(TimeInSec)
-        sTestCaseStatus = "Blocked"
+        sTestCaseStatus = "failed"
         after_execution_dict = {
             "teststarttime": datetime.fromtimestamp(TestCaseStartTime).strftime("%Y-%m-%d %H:%M:%S"),
             "testendtime": sTestCaseEndTime,

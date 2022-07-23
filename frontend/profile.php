@@ -100,25 +100,25 @@
             <h3>Want to change password?</h1><br>
                 <!-- Email input -->
                 <div class="form-outline">
-                    <input type="text" name="cur_password" id="cur_password" class="form-control" />
                     <label class="form-label" for="cur_password">Current Password</label>
+                    <input type="text" name="cur_password" id="cur_password" class="form-control" />
                 </div>
 
                 <!-- Password input -->
                 <div class="form-outline">
-                    <input type="password" name="npassword" id="npassword" class="form-control" />
                     <label class="form-label" for="npassword">New Password</label>
+                    <input type="password" name="npassword" id="npassword" class="form-control" />
                 </div>
 
                 <!-- Confirm Password input -->
                 <div class="form-outline">
-                    <input type="password" name="cpassword" id="cpassword" class="form-control" />
                     <label class="form-label" for="cpassword">Confirm Password</label>
+                    <input type="password" name="cpassword" id="cpassword" class="form-control" />
                 </div>
 
                 <!-- Submit button -->
-                <button type="submit" class="btn btn-primary btn-block mb-4">Change Password</button>
-                <button type="button" class="btn btn-danger btn-block mb-4" id="remove">Delete Account</button>
+                <button type="submit" class="btn btn-primary btn-block my-4">Change Password</button>
+                <button type="button" class="btn btn-danger btn-block my-4" id="remove">Delete Account</button>
 
                 <!-- Register buttons -->
 

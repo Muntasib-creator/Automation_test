@@ -1655,18 +1655,7 @@ def Run_Application(data_set):
             # if not Desktop_app.endswith(".exe"):
             #     Desktop_app += ".exe"
             CommonUtil.ExecLog(sModuleInfo, "Waiting for the app to launch for maximum %s seconds" % wait, 1)
-            s = time.time()
-            while time.time() - s < wait:
-                # if len(pygetwindow.getWindowsWithTitle(Desktop_app)) > 0:     # This is case in-sensitive
-                if Desktop_app in pygetwindow.getActiveWindow().title:          # This is case sensitive
-                    break
-                time.sleep(0.5)
-            else:
-                if maximize or size is not None:
-                    CommonUtil.ExecLog(sModuleInfo, "Could not find any launched app with title: %s however continuing. Maximize or custom app size wont work" % Desktop_app, 2)
-                else:
-                    CommonUtil.ExecLog(sModuleInfo, "Could not find any launched app with title: %s however continuing" % Desktop_app, 2)
-                return "passed"
+            return "passed"
 
         if maximize:
             win = pygetwindow.getWindowsWithTitle(Desktop_app)[0]
