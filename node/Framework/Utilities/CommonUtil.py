@@ -690,6 +690,7 @@ def set_screenshot_vars(shared_variables):
 
 
 def TakeScreenShot(function_name, local_run=False):
+    return
     """ Puts TakeScreenShot into a thread, so it doesn't block test case execution """
     # if debug_status: return     # Todo: Comment this line out
     try:

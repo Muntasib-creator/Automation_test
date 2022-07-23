@@ -27,7 +27,6 @@ from .Utilities import ConfigModule, FileUtilities as FL, CommonUtil, RequestFor
 from Framework.Built_In_Automation.Shared_Resources import (
     BuiltInFunctionSharedResources as shared,
 )
-from Framework.Utilities import ws
 from reporting import junit_report
 
 from rich.style import Style
@@ -659,7 +658,7 @@ def run_all_test_steps_in_a_test_case(
 def calculate_test_case_result(sModuleInfo, TestCaseID, run_id, sTestStepResultList, testcase_info):
     if "BLOCKED" in sTestStepResultList:
         CommonUtil.ExecLog(sModuleInfo, "Test Case Blocked", 3)
-        sTestCaseStatus = "Blocked"
+        sTestCaseStatus = "failed"
     elif "CANCELLED" in sTestStepResultList or "Cancelled" in sTestStepResultList:
         CommonUtil.ExecLog(sModuleInfo, "Test Case Cancelled", 3)
         sTestCaseStatus = "Cancelled"
@@ -672,7 +671,7 @@ def calculate_test_case_result(sModuleInfo, TestCaseID, run_id, sTestStepResultL
                     break
             step_index += 1
         else:
-            sTestCaseStatus = "Blocked"
+            sTestCaseStatus = "failed"
         CommonUtil.ExecLog(sModuleInfo, "Test Case " + sTestCaseStatus, 3)
 
     elif "WARNING" in sTestStepResultList:
@@ -810,6 +809,7 @@ def run_test_case(
         file_specific_steps = all_file_specific_steps[TestCaseID] if TestCaseID in all_file_specific_steps else {}
         TestCaseName = testcase_info["title"]
         shared.Set_Shared_Variables("zeuz_current_tc", testcase_info, print_variable=False, pretty=False)
+        shared.Set_Shared_Variables("zeuz_auto_teardown", "on")
 
         # log_line = "# EXECUTING TEST CASE : %s :: %s #" % (test_case, TestCaseName)
         # print("#"*(len(log_line)))
@@ -925,7 +925,7 @@ def run_test_case(
         TimeDiff = TestCaseEndTime - TestCaseStartTime
         TimeInSec = int(TimeDiff)
         TestCaseDuration = CommonUtil.FormatSeconds(TimeInSec)
-        sTestCaseStatus = "Blocked"
+        sTestCaseStatus = "failed"
         after_execution_dict = {
             "teststarttime": datetime.fromtimestamp(TestCaseStartTime).strftime("%Y-%m-%d %H:%M:%S"),
             "testendtime": sTestCaseEndTime,
@@ -1344,8 +1344,8 @@ def main(device_dict, user_info_object):
             CommonUtil.clear_all_logs()
 
             CommonUtil.run_cancelled = False
-            thr = executor.submit(check_run_cancel, run_id)
-            CommonUtil.SaveThread("run_cancel", thr)
+            # thr = executor.submit(check_run_cancel, run_id)
+            # CommonUtil.SaveThread("run_cancel", thr)
 
             # Write testcase json
             path = ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file) / Path(run_id.replace(":", "-"))
@@ -1361,7 +1361,7 @@ def main(device_dict, user_info_object):
                 # )
                 CommonUtil.debug_status = True
                 print("[LIVE LOG] Connecting to Live Log service")
-                ws.connect()
+                # ws.connect()
                 print("[LIVE LOG] Connected to Live Log service")
             else:
                 # CommonUtil.ExecLog(
@@ -1574,10 +1574,11 @@ def main(device_dict, user_info_object):
                 }
                 CommonUtil.CreateJsonReport(setInfo=after_execution_dict)
 
-                if float(server_version.split(".")[0]) < 7:
-                    upload_json_report_old(Userid, temp_ini_file, run_id)
-                else:
-                    upload_reports_and_zips(Userid, temp_ini_file, run_id)
+                # if float(server_version.split(".")[0]) < 7:
+                #     upload_json_report_old(Userid, temp_ini_file, run_id)
+                # else:
+                #     upload_reports_and_zips(Userid, temp_ini_file, run_id)
+
 
                 session_cnt += 1
 
@@ -1616,9 +1617,9 @@ def main(device_dict, user_info_object):
                 # executor.submit(upload_json_report)
 
             # Close websocket connection.
-            elif CommonUtil.debug_status:
-                ws.close()
-                print("[LIVE LOG] Disconnected from Live Log service")
+            # elif CommonUtil.debug_status:
+                # ws.close()
+                # print("[LIVE LOG] Disconnected from Live Log service")
             CommonUtil.runid_index += 1
 
             # Terminating all run_cancel threads after finishing a run_id

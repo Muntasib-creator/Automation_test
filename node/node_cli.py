@@ -17,12 +17,13 @@ with open(version_path, "r"):
         os.system("title " + "Python " + platform.python_version() + "(" + platform.architecture()[0] + ")" + " -- ZeuZ Node " + text)
     print(version_path.read_text())
 from Framework.module_installer import install_missing_modules
-install_missing_modules()
+# install_missing_modules()
 
 import sys, time, os.path, base64, signal, argparse, requests, zipfile
 from getpass import getpass
 from urllib3.exceptions import InsecureRequestWarning
 from tqdm import tqdm
+import copy
 
 # Suppress the InsecureRequestWarning since we use verify=False parameter.
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
@@ -1048,8 +1049,33 @@ def Bypass():
         print("[Bypass] Zeuz Node is online: %s" % testerid)
         RunProcess(testerid, user_info_object)
 
-
-json_data = [
+testcase_template = {
+    "testcase_no": "TEST-5103", #todo Done
+    "title": "muhib If element found",  #todo Done
+    "automatability": "Automated",
+    "debug_steps": [],
+    "testcase_attachments_links": [],
+    "steps": [
+        {
+            "step_id": 7458,
+            "step_name": "temp",
+            "step_sequence": 1,
+            "step_driver_type": "Built_In_Driver",
+            "automatablity": "automated",
+            "always_run": False,
+            "run_on_fail": False,
+            "step_function": "Sequential Actions",
+            "step_driver": "Built_In_Driver",
+            "type": "linked",
+            "step_attachments": [],
+            "verify_point": False,
+            "continue_on_fail": False,
+            "step_time": 59,
+            "actions": []   #todo done
+        }
+    ]
+}
+json_data_template = [
     {
         "run_id": "debug_admin",    #todo
         "release_version": "6.1.0",
@@ -1061,113 +1087,7 @@ json_data = [
         "is_linked": "",
         "device_info": {"browser_stack": {}},
         "test_cases": [
-            {
-                "testcase_no": "TEST-5103", #todo Done
-                "title": "muhib If element found",  #todo   Done
-                "automatability": "Automated",
-                "debug_steps": [],
-                "testcase_attachments_links": [],
-                "steps": [
-                    {
-                        "step_id": 7458,
-                        "step_name": "temp",
-                        "step_sequence": 1,
-                        "step_driver_type": "Built_In_Driver",
-                        "automatablity": "automated",
-                        "always_run": False,
-                        "run_on_fail": False,
-                        "step_function": "Sequential Actions",
-                        "step_driver": "Built_In_Driver",
-                        "type": "linked",
-                        "step_attachments": [],
-                        "verify_point": False,
-                        "continue_on_fail": False,
-                        "step_time": 59,
-                        "actions": [    #todo done
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "go to link",
-                                        "selenium action",
-                                        "https://demo.zeuz.ai/web/level/one/scenerios/login"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "username_id"
-                                    ],
-                                    [
-                                        "text",
-                                        "selenium action",
-                                        "zeuzTest"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "password_id"
-                                    ],
-                                    [
-                                        "text",
-                                        "selenium action",
-                                        "zeuzPass"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "signin_id"
-                                    ],
-                                    [
-                                        "click",
-                                        "selenium action",
-                                        "click"
-                                    ]
-                                ]
-                            },
-                            {
-                                "action_name": "None",
-                                "action_disabled": False,
-                                "step_actions": [
-                                    [
-                                        "ignore case",
-                                        "optional parameter",
-                                        "yes"
-                                    ],
-                                    [
-                                        "id",
-                                        "element parameter",
-                                        "text_showing"
-                                    ],
-                                    [
-                                        "validate full text",
-                                        "selenium action",
-                                        "Login Successful"
-                                    ]
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
+
         ],
         "dependency_list": {
             "Browser": "Chrome",
@@ -1176,11 +1096,7 @@ json_data = [
         "debug": "yes",     #todo
         "debug_clean": "NO",    #todo
         "debug_step_actions": [ #todo
-            "1",
-            "2",
-            "3",
-            "4",
-            "5"
+
         ],
         "debug_steps": [
             "1"
@@ -1217,112 +1133,132 @@ def custom_run(log_dir=None):
         device_dict = All_Device_Info.get_all_connected_device_info()
         rem_config = {"local_run": True}
         ConfigModule.remote_config = rem_config
-        username = ConfigModule.get_config_value(AUTHENTICATION_TAG, USERNAME_TAG)
-        password = ConfigModule.get_config_value(AUTHENTICATION_TAG, PASSWORD_TAG)
-        server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
-        from rich.console import Console
-        rich_print = Console().print
-        rich_print("\nAuthentication successful")
-        rich_print("SERVER=", end="")
-        rich_print(server_name, style="bold cyan")
-        rich_print(":green_circle:" + username, style="bold cyan", end="")
-        print(" is Online\n")
 
-        etime = time.time() + (30 * 60)  # 30 minutes
+        login_log = True
         while True:
             try:
-                if time.time() > etime:
-                    print("30 minutes over, logging in again")
-                    break
-                r = requests.get("%s/automation_test/deployment.php?username=%s" %(server_name, username)).json()
+                username = ConfigModule.get_config_value(AUTHENTICATION_TAG, USERNAME_TAG)
+                password = ConfigModule.get_config_value(AUTHENTICATION_TAG, PASSWORD_TAG)
+                api_key = ConfigModule.get_config_value(AUTHENTICATION_TAG, "api-key")
+                server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
+                url = "%s/automation_test/backend/node_login.php" % server_name
+                res = requests.post(url, {"username": username, "api-key": api_key})
+                r = res.json()
+                if "successful" in r["res"].lower():
+                    if login_log:
+                        CommonUtil.ExecLog("[Login]", "Successfully Logged in with username = %s" % username, 1)
+                        from rich.console import Console
+                        rich_print = Console().print
+                        rich_print("\nAuthentication successful")
+                        rich_print("SERVER = ", end="")
+                        rich_print(server_name, style="bold cyan")
+                        rich_print(":green_circle: " + username, style="bold cyan", end="")
+                        print(" is Online\n")
+                        login_log = False
+                else:
+                    CommonUtil.ExecLog("[Login]", r["res"], 3)
+                    time.sleep(3)
+                    login_log = True
+                    continue
+
+                url = "%s/automation_test/backend/deployment.php" % (server_name)
+                res = requests.post(url, {"username": username, "api-key": api_key})
+                r = res.json()
                 if r and "run_status" in r and r["run_status"] != "no":
                     PreProcess(log_dir=log_dir)
-
                     save_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file)) / "attachments"
                     FL.CreateFolder(save_path, forced=True)
-                    ac_data = r["action_data"]
+                    json_data = copy.deepcopy(json_data_template)
+
+                    if "run" in r["run_status"]:
+                        json_data[0]["run_id"] = "run_admin"
+
+                    all_ac_data = r["action_data"]
+                    mod_all_ac_data = {}
+                    tc_id = ""
+                    for row in all_ac_data:
+                        if tc_id != row["tc_id"]:
+                            tc_id = row["tc_id"]
+                            mod_all_ac_data[tc_id] = [row]
+                        else:
+                            mod_all_ac_data[tc_id].append(row)
                     tc_data = r["tc_data"]
-                    json_data[0]["test_cases"][0]["title"] = tc_data["tc_name"]
-                    json_data[0]["test_cases"][0]["testcase_no"] = "TEST-" + "0"*(4-len(tc_data["id"])) + tc_data["id"]
-                    actions = []
-                    c = 0
-                    for i in ac_data:
-                        c = max(c, int(i["action_seq"]))
-                    for i in range(c):
-                        actions.append({
+                    for i in range(len(tc_data)): json_data[0]["test_cases"].append(copy.deepcopy(testcase_template))
+                    for i in range(len(tc_data)):
+                        json_data[0]["test_cases"][i]["title"] = tc_data[i]["tc_name"]
+                        json_data[0]["test_cases"][i]["testcase_no"] = "TEST-" + "0"*(4-len(tc_data[i]["id"])) + tc_data[i]["id"]
+                        actions = []
+                        if tc_data[i]["id"] not in mod_all_ac_data:
+                            json_data[0]["test_cases"][i]["steps"][0]["actions"] = []
+                            continue
+
+                        ac_data = mod_all_ac_data[tc_data[i]["id"]]
+                        c = 0
+                        for j in ac_data:
+                            c = max(c, int(j["action_seq"]))
+                        for j in range(c):
+                            actions.append({
                                 "action_name": None,
                                 "action_disabled": None,
                                 "step_actions": []
                             })
-                    for i in ac_data:
-                        actions[int(i["action_seq"])-1]["action_name"] = i["action_name"]
-                        actions[int(i["action_seq"])-1]["action_disabled"] = bool(int(i["action_disable"]))
-                        actions[int(i["action_seq"])-1]["step_actions"].append([i["field"], i["sub_field"], i["value"]])
+                        for j in ac_data:
+                            actions[int(j["action_seq"])-1]["action_name"] = j["action_name"]
+                            actions[int(j["action_seq"])-1]["action_disabled"] = bool(int(j["action_disable"])) if "debug" in r["run_status"] else False
+                            actions[int(j["action_seq"])-1]["step_actions"].append([j["field"], j["sub_field"], j["value"]])
 
-                    json_data[0]["test_cases"][0]["steps"][0]["actions"] = actions
+                        json_data[0]["test_cases"][i]["steps"][0]["actions"] = actions
                     with open(save_path / f"{username}.json", 'w') as file:
                         file.write(json.dumps(json_data))
-                    CommonUtil.node_manager_json(
-                        {
-                            "state": "in_progress",
-                            "report": {
-                                "zip": None,
-                                "directory": None,
-                            }
-                        }
-                    )
                     try:
                         MainDriverApi.main(device_dict, user_info_object)
                     except:
                         pass
-
-                    # Terminating all run_cancel threads after finishing a run
-                    CommonUtil.run_cancel = ""
-                    CommonUtil.run_cancelled = True
-                    if "run_cancel" in CommonUtil.all_threads:
-                        for t in CommonUtil.all_threads["run_cancel"]:
-                            t.result()
-                            CommonUtil.run_cancelled = True
-                        del CommonUtil.all_threads["run_cancel"]
-                    CommonUtil.run_cancelled = False
-                    break
+                    login_log = True
+                    upload_json_report(json_data[0]["run_id"], username, api_key)
                 else:
                     time.sleep(3)
 
             except Exception as e:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                Error_Detail = (
-                        (str(exc_type).replace("type ", "Error Type: "))
-                        + ";"
-                        + "Error Message: "
-                        + str(exc_obj)
-                        + ";"
-                        + "File Name: "
-                        + fname
-                        + ";"
-                        + "Line: "
-                        + str(exc_tb.tb_lineno)
-                )
-                CommonUtil.ExecLog("", Error_Detail, 4, False)
-                break  # Exit back to login() - In some circumstances, this while loop will get into a state when certain errors occur, where nothing runs, but loops forever. This stops that from happening
+                CommonUtil.Exception_Handler(sys.exc_info())
+                print()
+
         return True
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        Error_Detail = (
-            (str(exc_type).replace("type ", "Error Type: "))
-            + ";"
-            + "Error Message: "
-            + str(exc_obj)
-            + ";"
-            + "File Name: "
-            + fname
-            + ";"
-            + "Line: "
-            + str(exc_tb.tb_lineno)
-        )
-        CommonUtil.ExecLog("", Error_Detail, 4, False)
+        CommonUtil.Exception_Handler(sys.exc_info())
+
+
+def upload_json_report(run_id, username, api_key):
+    try:
+        if CommonUtil.debug_status: return
+        server_name = ConfigModule.get_config_value(AUTHENTICATION_TAG, "server_address")
+        zip_path = Path(ConfigModule.get_config_value("sectionOne", "temp_run_file_path", temp_ini_file))/run_id.replace(":", "-")/CommonUtil.current_session_name
+        path = zip_path / "execution_log.json"
+        json_report = CommonUtil.get_all_logs(json=True)
+        with open(path, "w") as f:
+            json.dump(json_report, f)
+        report = []
+        for tc in json_report[0]["test_cases"]:
+            tc_no = int(tc["testcase_no"].split("-")[-1])
+            if "block" in tc["execution_detail"]["status"].lower() or "fail" in tc["execution_detail"]["status"].lower() :
+                status = "Failed"
+            else:
+                status = tc["execution_detail"]["status"]
+            report.append([tc_no, status, tc["execution_detail"]["duration"]])
+        try:
+            url = "%s/automation_test/backend/report.php" % server_name
+            res = requests.post(url, {"username": username, "api-key": api_key, "report": json.dumps(report)})
+            r = res.json()
+            if r["res"] == "ok":
+                CommonUtil.ExecLog("[Report]", "Successfully Uploaded the report", 1)
+            else:
+                CommonUtil.ExecLog("[Report]", r["res"], 3)
+        except:
+            CommonUtil.ExecLog("[Report]", "Could not upload the report", 3)
+            CommonUtil.Exception_Handler(sys.exc_info())
+    except:
+        CommonUtil.Exception_Handler(sys.exc_info())
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
